@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mayab Private Drivers — Chofer privado bilingüe en Mérida</title>
+<meta name="description" content="Chofer privado bilingüe (inglés-español) en Mérida, Yucatán. Transfers de aeropuerto, tours por hora o destino, y renta de vehículo con chofer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FBF3E6;
+  --cream-soft:#F2E3CB;
+  --ink:#15323A;
+  --ink-soft:#52676B;
+  --petrol:#0E5950;
+  --petrol-deep:#0B413B;
+  --petrol-line:rgba(255,255,255,0.22);
+  --terracotta:#D2652E;
+  --terracotta-strong:#B84F22;
+  --line:rgba(21,50,58,0.14);
+  --white:#FFFFFF;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;width:100%;overflow-x:hidden}
+h1,h2,h3,.display{font-family:'Baloo 2',system-ui,sans-serif}
+a{color:var(--terracotta-strong)}
+a:hover{color:var(--ink)}
+button{font-family:inherit;cursor:pointer}
+select,input{font-family:inherit}
+.navlabel{display:inline}
+@media (max-width:620px){.navlabel{display:none}}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th,.tbl td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);font-size:16.5px}
+.tbl th{font-family:'Baloo 2';font-weight:700;color:var(--ink-soft);font-size:16.5px;text-transform:uppercase;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var OFFICIAL = [
+    {name:'Ciudad Caucel', fare:300},
+    {name:'Las Américas', fare:300},
+    {name:'Los Héroes', fare:300},
+    {name:'Dzityá', fare:410},
+    {name:'La Isla / Temozón', fare:410},
+    {name:'Club de Golf La Ceiba / Yucatán', fare:410}
+  ];
+  var ESTIMATED = [
+    {name:'Altosano', fare:470},
+    {name:'Provincia Golf Club', fare:505},
+    {name:'Privada Blue Cedar (Komchén)', fare:515},
+    {name:'Residencial Arbórea (Conkal)', fare:515},
+    {name:'ARBELIA Privada Residencial (Conkal)', fare:535},
+    {name:'Privada Nadira (Conkal)', fare:535},
+    {name:'Conkal (centro)', fare:535},
+    {name:'San Diego Cutz Dos', fare:545},
+    {name:'Praderas del Mayab', fare:565},
+    {name:'Yaxkukul', fare:640}
+  ];
+  var ALL = OFFICIAL.concat(ESTIMATED);
+
+  var ALL_T = {
+    es: {
+      navServices:'Servicios', navTarifas:'Tarifas', navSobreMi:'Sobre mí',
+      heroBadge:'Intérprete certificado al volante',
+      heroTitle:'Chofer Privado Bilingüe en Mérida',
+      heroPara:'Transfers de aeropuerto, tours por hora o destino, y renta de vehículo con chofer. Conozco la Península de Yucatán a fondo y hablamos en tu idioma.',
+      heroCta1:'Reservar ahora', heroCta2:'Ver tarifas de transfer',
+      vehicleLabel:'Tu vehículo', vehicleName:'Kia Niro EX 2019', vehicleSub:'Híbrido · climatizado · hasta 4 pasajeros',
+      vehicleBullet1:'Inglés y español profesional', vehicleBullet2:'Vehículo propio, chofer de confianza', vehicleBullet3:'Efectivo, transferencia o tarjeta',
+      diffTitle:'Por qué viajar conmigo', diffSub:'Esto es lo que te puedo ofrecer.',
+      diffCard1Title:'Hablamos tu idioma', diffCard1Desc:'Platicamos en español o en inglés, como prefieras. Así el viaje es más fácil de principio a fin.',
+      diffCard2Title:'Conozco la zona', diffCard2Desc:'Conozco la Península de Yucatán más allá de las rutas de siempre. Si el viaje lo requiere, también puedo cubrir Chiapas y Tabasco. Cuéntame qué te interesa y armamos el recorrido a tu medida.',
+      diffCard3Title:'Buena plática en el camino', diffCard3Desc:'Si te gusta la naturaleza, la vida de rancho o simplemente platicar, seguro tenemos de qué hablar.',
+      servicesTitle:'Cuatro formas de moverte conmigo', servicesSub:'Desde un traslado sencillo hasta un día completo explorando la península.',
+      svc1Title:'Transfers aeropuerto', svc1Desc:'Tarifa fija por zona o fraccionamiento, sin taxímetro ni sorpresas. Te recoge en tu puerta.', svc1Cta:'Ver tarifas →',
+      svc2Title:'Tours por hora', svc2Desc:'Para eventos, reuniones o recorridos cortos por la ciudad. Mínimo 3 horas.', svc2Cta:'Cotizar →',
+      svc3Title:'Tours por destino', svc3Desc:'Progreso, Celestún, Uxmal, Chichén Itzá y más — se cotiza según destino y tiempo.', svc3Cta:'Elegir destino →',
+      svc4Title:'Renta con chofer', svc4Desc:'El Kia Niro y su chofer bilingüe, por hora o por día completo. Tú decides el itinerario.', svc4Cta:'Cotizar →',
+      destinosTitle:'Tours por destino', destinosHelper:'Toca un destino para armar tu solicitud con ese tour preseleccionado.',
+      destProgresoDesc:'Malecón, mariscos y el puerto más cercano a Mérida.',
+      destCelestunDesc:'Flamencos rosados y manglares — para quienes preguntan también por fauna.',
+      destSisalDesc:'Pueblo pesquero tranquilo, playa sin multitudes y buena comida frente al mar.',
+      destUxmalDesc:'Pirámides mayas con menos multitudes que Chichén Itzá.',
+      destChichenDesc:'La zona arqueológica más visitada de Yucatán.',
+      tarifasTitle:'Tarifas de transfer aeropuerto', tarifasIntro:'Tarifa plana por vehículo completo (hasta 4 pasajeros), no por persona. Solo se cobra el tramo con pasajero a bordo, entre tu zona y el aeropuerto.',
+      zoneSelectLabel:'¿Dónde vives o te hospedas?', zonePlaceholder:'Selecciona tu colonia o fraccionamiento…',
+      officialGroupLabel:'Tarifario de referencia oficial', estimatedGroupLabel:'Zonas estimadas (sin tarifario oficial)',
+      fareLabel:'Tarifa flat estimada', fareBadgeOfficial:'Tarifario de referencia oficial', fareBadgeEstimated:'Estimación propia — no oficial',
+      viewFullBtn:'Ver tabla completa de zonas', tblZoneHeader:'Zona', tblFareHeader:'Tarifa',
+      officialTableHeading:'Tarifario de referencia oficial', estimatedTableHeading:'Zonas estimadas (sin tarifario oficial)',
+      sobreMiRole:'Chofer privado bilingüe · Mérida, Yucatán',
+      reservarTitle:'Arma tu solicitud', reservarSub:'Elige el servicio, completa los datos y envíalo por WhatsApp. Confirmo disponibilidad y tarifa directamente contigo.',
+      serviceToggleLabel:'Servicio',
+      svcNameTransfer:'Transfer aeropuerto', svcNameHourly:'Tour por hora', svcNameDestino:'Tour por destino', svcNameRental:'Renta con chofer',
+      zoneBookingLabel:'Zona o fraccionamiento', zoneBookingPlaceholder:'Selecciona…',
+      destinoLabel:'Destino', horasLabel:'Horas (mínimo 3)',
+      modalidadLabel:'Modalidad', porDiaLabel:'Por día completo', porHoraLabel:'Por hora',
+      pasajerosLabel:'Pasajeros', pasajeroWord:'pasajero(s)',
+      nombreLabel:'Nombre (opcional)', nombrePh:'Tu nombre', telLabel:'Teléfono (opcional)', telPh:'Tu número',
+      submitBtn:'Enviar solicitud por WhatsApp',
+      orLabel:'O', calendlyBtn:'Agenda una llamada rápida',
+      contactoTitle:'Contacto', contactoZona:'Mérida y Península de Yucatán', contactoDisponibilidad:'Disponibilidad bajo reserva previa',
+      pagoTitle:'Formas de pago', efectivoLabel:'Efectivo', transferenciaLabel:'Transferencia bancaria (SPEI)', tarjetaLabel:'Tarjeta de crédito o débito (terminal)',
+      footerText:'© 2026 Mayab Private Drivers — Sergio Muñoz de Alba Medrano. Todos los derechos reservados.',
+      waGreeting:'Hola Sergio, quiero reservar con Mayab Private Drivers.',
+      waServiceLabel:'Servicio: ', waZoneLabel:'Zona: ', waZonePending:'(pendiente de confirmar)',
+      waDestinoLabel:'Destino: ', waHorasLabel:'Horas solicitadas: ', waHorasMinSuffix:' (mínimo 3)',
+      waModalidadLabel:'Modalidad: ', waFullDay:'Por día completo', waByHour:'Por hora',
+      waPassengersLabel:'Pasajeros: ', waNameLabel:'Nombre: ', waPhoneLabel:'Teléfono: ',
+      waGeneralMsg:'Hola Sergio, vi tu página de Mayab Private Drivers y quiero más información.'
+    },
+    en: {
+      navServices:'Services', navTarifas:'Rates', navSobreMi:'About me',
+      heroBadge:'A certified interpreter behind the wheel',
+      heroTitle:'Your Bilingual Private Driver in Mérida',
+      heroPara:"Airport transfers, hourly and destination tours, and chauffeured rentals. I know the Yucatán Peninsula well and we'll talk in your language.",
+      heroCta1:'Book now', heroCta2:'See transfer rates',
+      vehicleLabel:'Your ride', vehicleName:'Kia Niro EX 2019', vehicleSub:'Hybrid · air-conditioned · seats up to 4',
+      vehicleBullet1:'Professional-grade English & Spanish', vehicleBullet2:'Own vehicle, driver you can trust', vehicleBullet3:'Cash, transfer, or card',
+      diffTitle:'Why ride with me', diffSub:"Here's what I can offer.",
+      diffCard1Title:"We'll understand each other", diffCard1Desc:"We can talk in English or Spanish, whichever you prefer. Makes the whole trip easier.",
+      diffCard2Title:'I know the area', diffCard2Desc:"I know the Yucatán Peninsula well beyond the usual tourist routes. I can also cover Chiapas and Tabasco if the trip calls for it. Tell me what interests you and we'll shape the trip around it.",
+      diffCard3Title:'Good conversation along the way', diffCard3Desc:"If you're into nature, ranch life, or just like to talk, chances are we'll have plenty to talk about.",
+      servicesTitle:'Four ways to get around with me', servicesSub:'From a simple ride to a full day exploring the peninsula.',
+      svc1Title:'Airport transfers', svc1Desc:'A flat rate by zone, no meter, no surprises. Door-to-door pickup.', svc1Cta:'See rates →',
+      svc2Title:'Hourly tours', svc2Desc:'For events, meetings, or a short city tour. 3-hour minimum.', svc2Cta:'Get a quote →',
+      svc3Title:'Destination tours', svc3Desc:'Progreso, Celestún, Uxmal, Chichén Itzá, and more — quoted by destination and time.', svc3Cta:'Pick a destination →',
+      svc4Title:'Chauffeured rental', svc4Desc:'The Kia Niro and its bilingual driver, by the hour or the full day. You call the shots.', svc4Cta:'Get a quote →',
+      destinosTitle:'Destination tours', destinosHelper:'Tap a destination to start your request with that tour pre-selected.',
+      destProgresoDesc:'The boardwalk, fresh seafood, and the closest port to Mérida.',
+      destCelestunDesc:"Pink flamingos and mangroves — a favorite if you're into wildlife too.",
+      destSisalDesc:'A quiet fishing village, an uncrowded beach, and good food right on the water.',
+      destUxmalDesc:'Maya pyramids with far fewer crowds than Chichén Itzá.',
+      destChichenDesc:"Yucatán's most visited archaeological site.",
+      tarifasTitle:'Airport transfer rates', tarifasIntro:"A flat rate for the whole vehicle (up to 4 passengers), not per person. You're only charged for the leg with a passenger on board, between your zone and the airport.",
+      zoneSelectLabel:'Where are you staying?', zonePlaceholder:'Pick your neighborhood…',
+      officialGroupLabel:'Official reference rates', estimatedGroupLabel:'Estimated zones (not officially listed)',
+      fareLabel:'Estimated flat rate', fareBadgeOfficial:'Official reference rate', fareBadgeEstimated:'Our own estimate — not official',
+      viewFullBtn:'See the full rate list', tblZoneHeader:'Zone', tblFareHeader:'Rate',
+      officialTableHeading:'Official reference rates', estimatedTableHeading:'Estimated zones (not officially listed)',
+      sobreMiRole:'Bilingual private driver · Mérida, Yucatán',
+      reservarTitle:'Build your request', reservarSub:"Pick a service, fill in the details, and send it over WhatsApp. I'll confirm availability and rate with you directly.",
+      serviceToggleLabel:'Service',
+      svcNameTransfer:'Airport transfer', svcNameHourly:'Hourly tour', svcNameDestino:'Destination tour', svcNameRental:'Chauffeured rental',
+      zoneBookingLabel:'Zone or neighborhood', zoneBookingPlaceholder:'Select…',
+      destinoLabel:'Destination', horasLabel:'Hours (3-hour minimum)',
+      modalidadLabel:'Rate type', porDiaLabel:'Full day', porHoraLabel:'By the hour',
+      pasajerosLabel:'Passengers', pasajeroWord:'passenger(s)',
+      nombreLabel:'Name (optional)', nombrePh:'Your name', telLabel:'Phone (optional)', telPh:'Your number',
+      submitBtn:'Send request on WhatsApp',
+      orLabel:'Or', calendlyBtn:'Book a quick call',
+      contactoTitle:'Get in touch', contactoZona:'Mérida and the Yucatán Peninsula', contactoDisponibilidad:'Availability by advance booking',
+      pagoTitle:'Payment methods', efectivoLabel:'Cash', transferenciaLabel:'Bank transfer (SPEI)', tarjetaLabel:'Credit or debit card (terminal)',
+      footerText:'© 2026 Mayab Private Drivers — Sergio Muñoz de Alba Medrano. All rights reserved.',
+      waGreeting:"Hi Sergio, I'd like to book with Mayab Private Drivers.",
+      waServiceLabel:'Service: ', waZoneLabel:'Zone: ', waZonePending:'(to be confirmed)',
+      waDestinoLabel:'Destination: ', waHorasLabel:'Hours requested: ', waHorasMinSuffix:' (3-hour minimum)',
+      waModalidadLabel:'Rate type: ', waFullDay:'Full day', waByHour:'By the hour',
+      waPassengersLabel:'Passengers: ', waNameLabel:'Name: ', waPhoneLabel:'Phone: ',
+      waGeneralMsg:"Hi Sergio, I saw your Mayab Private Drivers page and I'd like more information."
+    },
+    fr: {
+      navServices:'Services', navTarifas:'Tarifs', navSobreMi:'À propos',
+      heroBadge:'Interprète certifié (anglais-espagnol)',
+      heroTitle:'Votre chauffeur privé à Mérida',
+      heroPara:"Transferts aéroport, excursions à l'heure ou à la carte, et location avec chauffeur. Je connais bien la péninsule du Yucatán. On se comprendra en espagnol ou en anglais ; mon français reste limité, mais je saisis l'essentiel.",
+      heroCta1:'Réserver maintenant', heroCta2:'Voir les tarifs de transfert',
+      vehicleLabel:'Votre véhicule', vehicleName:'Kia Niro EX 2019', vehicleSub:"Hybride · climatisé · jusqu'à 4 passagers",
+      vehicleBullet1:"Anglais et espagnol de niveau professionnel", vehicleBullet2:'Véhicule personnel, chauffeur de confiance', vehicleBullet3:'Espèces, virement ou carte',
+      diffTitle:'Pourquoi voyager avec moi', diffSub:'Voici ce que je peux vous offrir.',
+      diffCard1Title:'On se comprendra', diffCard1Desc:"On peut parler espagnol ou anglais, comme vous préférez. Ça simplifie tout le trajet.",
+      diffCard2Title:'Je connais la région', diffCard2Desc:'Je connais la péninsule du Yucatán bien au-delà des sentiers touristiques habituels. Je peux aussi couvrir le Chiapas et le Tabasco si le trajet le demande. Dites-moi ce qui vous intéresse et on adapte le trajet.',
+      diffCard3Title:'On papote en chemin', diffCard3Desc:'Si la nature, la vie de hacienda ou simplement discuter vous intéresse, on aura sûrement des choses à se dire.',
+      servicesTitle:'Quatre façons de se déplacer avec moi', servicesSub:"D'une simple course à une journée entière à explorer la péninsule.",
+      svc1Title:'Transferts aéroport', svc1Desc:'Tarif fixe par zone, sans compteur ni mauvaise surprise. Prise en charge à votre porte.', svc1Cta:'Voir les tarifs →',
+      svc2Title:'Excursions à l’heure', svc2Desc:'Pour un événement, une réunion ou une courte visite de la ville. 3 heures minimum.', svc2Cta:'Demander un devis →',
+      svc3Title:'Excursions à la carte', svc3Desc:'Progreso, Celestún, Uxmal, Chichén Itzá et plus — devis selon la destination et la durée.', svc3Cta:'Choisir une destination →',
+      svc4Title:'Location avec chauffeur', svc4Desc:'Le Kia Niro et son chauffeur bilingue, à l’heure ou à la journée. Vous décidez de l’itinéraire.', svc4Cta:'Demander un devis →',
+      destinosTitle:'Excursions à la carte', destinosHelper:'Touchez une destination pour préremplir votre demande avec cette excursion.',
+      destProgresoDesc:'La promenade, les fruits de mer frais, le port le plus proche de Mérida.',
+      destCelestunDesc:'Flamants roses et mangroves — parfait si la faune vous intéresse aussi.',
+      destSisalDesc:'Un village de pêcheurs tranquille, une plage sans foule, et de la bonne cuisine face à la mer.',
+      destUxmalDesc:'Pyramides mayas, avec bien moins de monde qu’à Chichén Itzá.',
+      destChichenDesc:'Le site archéologique le plus visité du Yucatán.',
+      tarifasTitle:'Tarifs des transferts aéroport', tarifasIntro:"Tarif fixe pour tout le véhicule (jusqu'à 4 passagers), pas par personne. Seul le trajet avec passager à bord, entre votre zone et l'aéroport, est facturé.",
+      zoneSelectLabel:'Où logez-vous ?', zonePlaceholder:'Choisissez votre quartier…',
+      officialGroupLabel:'Tarifs de référence officiels', estimatedGroupLabel:'Zones estimées (hors tarif officiel)',
+      fareLabel:'Tarif fixe estimé', fareBadgeOfficial:'Tarif de référence officiel', fareBadgeEstimated:'Notre propre estimation — non officielle',
+      viewFullBtn:'Voir le tarif complet', tblZoneHeader:'Zone', tblFareHeader:'Tarif',
+      officialTableHeading:'Tarifs de référence officiels', estimatedTableHeading:'Zones estimées (hors tarif officiel)',
+      sobreMiRole:'Chauffeur privé bilingue · Mérida, Yucatán',
+      reservarTitle:'Construisez votre demande', reservarSub:'Choisissez un service, remplissez les détails et envoyez tout par WhatsApp. Je confirme la disponibilité et le tarif directement avec vous.',
+      serviceToggleLabel:'Service',
+      svcNameTransfer:'Transfert aéroport', svcNameHourly:'Excursion à l’heure', svcNameDestino:'Excursion à la carte', svcNameRental:'Location avec chauffeur',
+      zoneBookingLabel:'Zone ou quartier', zoneBookingPlaceholder:'Choisissez…',
+      destinoLabel:'Destination', horasLabel:'Heures (3 h minimum)',
+      modalidadLabel:'Formule', porDiaLabel:'Journée complète', porHoraLabel:'À l’heure',
+      pasajerosLabel:'Passagers', pasajeroWord:'passager(s)',
+      nombreLabel:'Nom (facultatif)', nombrePh:'Votre nom', telLabel:'Téléphone (facultatif)', telPh:'Votre numéro',
+      submitBtn:'Envoyer la demande sur WhatsApp',
+      orLabel:'Ou', calendlyBtn:'Réserver un appel rapide',
+      contactoTitle:'Contact', contactoZona:'Mérida et la péninsule du Yucatán', contactoDisponibilidad:'Disponibilité sur réservation préalable',
+      pagoTitle:'Moyens de paiement', efectivoLabel:'Espèces', transferenciaLabel:'Virement bancaire (SPEI)', tarjetaLabel:'Carte de crédit ou de débit (terminal)',
+      footerText:'© 2026 Mayab Private Drivers — Sergio Muñoz de Alba Medrano. Tous droits réservés.',
+      waGreeting:'Bonjour Sergio, je souhaite réserver avec Mayab Private Drivers.',
+      waServiceLabel:'Service : ', waZoneLabel:'Zone : ', waZonePending:'(à confirmer)',
+      waDestinoLabel:'Destination : ', waHorasLabel:'Heures demandées : ', waHorasMinSuffix:' (3 h minimum)',
+      waModalidadLabel:'Formule : ', waFullDay:'Journée complète', waByHour:'À l’heure',
+      waPassengersLabel:'Passagers : ', waNameLabel:'Nom : ', waPhoneLabel:'Téléphone : ',
+      waGeneralMsg:"Bonjour Sergio, j'ai vu votre page Mayab Private Drivers et j'aimerais en savoir plus."
+    },
+    it: {
+      navServices:'Servizi', navTarifas:'Tariffe', navSobreMi:'Chi sono',
+      heroBadge:'Interprete certificato (inglese-spagnolo)',
+      heroTitle:'Il tuo autista privato a Mérida',
+      heroPara:"Transfer aeroportuali, tour a ore o su misura, e noleggio con autista. Conosco bene la penisola dello Yucatán. Ci capiremo in spagnolo o in inglese; il mio italiano è limitato, ma capisco l'essenziale.",
+      heroCta1:'Prenota ora', heroCta2:'Guarda le tariffe del transfer',
+      vehicleLabel:'Il tuo veicolo', vehicleName:'Kia Niro EX 2019', vehicleSub:'Ibrida · climatizzata · fino a 4 passeggeri',
+      vehicleBullet1:'Inglese e spagnolo di livello professionale', vehicleBullet2:'Auto propria, autista di fiducia', vehicleBullet3:'Contanti, bonifico o carta',
+      diffTitle:'Perché viaggiare con me', diffSub:'Ecco cosa posso offrirti.',
+      diffCard1Title:'Ci capiremo', diffCard1Desc:"Parliamo spagnolo o inglese, come preferisci. Così il viaggio è più semplice dall'inizio alla fine.",
+      diffCard2Title:'Conosco la zona', diffCard2Desc:'Conosco la penisola dello Yucatán ben oltre le rotte turistiche abituali. Posso coprire anche Chiapas e Tabasco, se il viaggio lo richiede. Dimmi cosa ti interessa e adattiamo il percorso.',
+      diffCard3Title:'Due chiacchiere lungo la strada', diffCard3Desc:"Se ti interessano la natura, la vita di campagna o semplicemente due chiacchiere, avremo sicuramente di che parlare.",
+      servicesTitle:'Quattro modi per muoverti con me', servicesSub:"Da una corsa semplice a una giornata intera a esplorare la penisola.",
+      svc1Title:'Transfer aeroportuali', svc1Desc:'Tariffa fissa per zona, niente tassametro né sorprese. Ti viene a prendere alla porta.', svc1Cta:'Guarda le tariffe →',
+      svc2Title:'Tour a ore', svc2Desc:'Per eventi, riunioni o un breve giro in città. Minimo 3 ore.', svc2Cta:'Richiedi un preventivo →',
+      svc3Title:'Tour su misura', svc3Desc:"Progreso, Celestún, Uxmal, Chichén Itzá e altro — preventivo in base a destinazione e durata.", svc3Cta:'Scegli una destinazione →',
+      svc4Title:'Noleggio con autista', svc4Desc:"La Kia Niro e il suo autista bilingue, a ore o per l'intera giornata. Decidi tu l'itinerario.", svc4Cta:'Richiedi un preventivo →',
+      destinosTitle:'Tour su misura', destinosHelper:'Tocca una destinazione per precompilare la richiesta con quel tour.',
+      destProgresoDesc:'Il lungomare, pesce fresco, il porto più vicino a Mérida.',
+      destCelestunDesc:'Fenicotteri rosa e mangrovie — ottimo se ti interessa anche la fauna.',
+      destSisalDesc:'Un tranquillo villaggio di pescatori, una spiaggia senza folla e buon pesce vista mare.',
+      destUxmalDesc:'Piramidi maya con molta meno folla rispetto a Chichén Itzá.',
+      destChichenDesc:'Il sito archeologico più visitato dello Yucatán.',
+      tarifasTitle:'Tariffe transfer aeroportuale', tarifasIntro:"Tariffa fissa per l'intero veicolo (fino a 4 passeggeri), non a persona. Si paga solo la tratta con passeggero a bordo, tra la tua zona e l'aeroporto.",
+      zoneSelectLabel:'Dove alloggi?', zonePlaceholder:'Scegli il tuo quartiere…',
+      officialGroupLabel:'Tariffe di riferimento ufficiali', estimatedGroupLabel:'Zone stimate (senza tariffa ufficiale)',
+      fareLabel:'Tariffa fissa stimata', fareBadgeOfficial:'Tariffa di riferimento ufficiale', fareBadgeEstimated:'Stima nostra — non ufficiale',
+      viewFullBtn:'Guarda la tariffa completa', tblZoneHeader:'Zona', tblFareHeader:'Tariffa',
+      officialTableHeading:'Tariffe di riferimento ufficiali', estimatedTableHeading:'Zone stimate (senza tariffa ufficiale)',
+      sobreMiRole:'Autista privato bilingue · Mérida, Yucatán',
+      reservarTitle:'Crea la tua richiesta', reservarSub:'Scegli il servizio, compila i dettagli e invialo su WhatsApp. Confermo disponibilità e tariffa direttamente con te.',
+      serviceToggleLabel:'Servizio',
+      svcNameTransfer:'Transfer aeroportuale', svcNameHourly:'Tour a ore', svcNameDestino:'Tour su misura', svcNameRental:'Noleggio con autista',
+      zoneBookingLabel:'Zona o quartiere', zoneBookingPlaceholder:'Seleziona…',
+      destinoLabel:'Destinazione', horasLabel:'Ore (minimo 3)',
+      modalidadLabel:'Modalità', porDiaLabel:'Giornata intera', porHoraLabel:'A ore',
+      pasajerosLabel:'Passeggeri', pasajeroWord:'passeggero/i',
+      nombreLabel:'Nome (facoltativo)', nombrePh:'Il tuo nome', telLabel:'Telefono (facoltativo)', telPh:'Il tuo numero',
+      submitBtn:'Invia la richiesta su WhatsApp',
+      orLabel:'Oppure', calendlyBtn:'Prenota una chiamata rapida',
+      contactoTitle:'Contatti', contactoZona:'Mérida e la penisola dello Yucatán', contactoDisponibilidad:'Disponibilità su prenotazione',
+      pagoTitle:'Metodi di pagamento', efectivoLabel:'Contanti', transferenciaLabel:'Bonifico bancario (SPEI)', tarjetaLabel:'Carta di credito o debito (terminale)',
+      footerText:'© 2026 Mayab Private Drivers — Sergio Muñoz de Alba Medrano. Tutti i diritti riservati.',
+      waGreeting:'Ciao Sergio, vorrei prenotare con Mayab Private Drivers.',
+      waServiceLabel:'Servizio: ', waZoneLabel:'Zona: ', waZonePending:'(da confermare)',
+      waDestinoLabel:'Destinazione: ', waHorasLabel:'Ore richieste: ', waHorasMinSuffix:' (minimo 3 ore)',
+      waModalidadLabel:'Modalità: ', waFullDay:'Giornata intera', waByHour:'A ore',
+      waPassengersLabel:'Passeggeri: ', waNameLabel:'Nome: ', waPhoneLabel:'Telefono: ',
+      waGeneralMsg:'Ciao Sergio, ho visto la pagina Mayab Private Drivers e vorrei maggiori informazioni.'
+    }
+  };
+
+  var state = {
+    lang: 'es',
+    zone: '',
+    showFullTable: false,
+    service: 'transfer',
+    destino: 'Progreso',
+    zoneBooking: '',
+    horas: 3,
+    rentalType: 'dia',
+    passengers: 1,
+    name: '',
+    phone: ''
+  };
+
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function optionsFor(list, withFare){
+    return list.map(function(z){
+      return '<option value="'+esc(z.name)+'">'+esc(z.name)+(withFare?(' — $'+z.fare+' MXN'):'')+'</option>';
+    }).join('');
+  }
+
+  function rowsFor(list){
+    return list.map(function(z){
+      return '<tr><td>'+esc(z.name)+'</td><td style="font-weight:700">$'+z.fare+' MXN</td></tr>';
+    }).join('');
+  }
+
+  function buildBookingMessage(t){
+    var svcNames = {transfer:t.svcNameTransfer, hourly:t.svcNameHourly, destino:t.svcNameDestino, rental:t.svcNameRental};
+    var lines = [t.waGreeting];
+    lines.push(t.waServiceLabel + (svcNames[state.service] || state.service));
+    if (state.service === 'transfer') lines.push(t.waZoneLabel + (state.zoneBooking || t.waZonePending));
+    if (state.service === 'destino') lines.push(t.waDestinoLabel + state.destino);
+    if (state.service === 'hourly') lines.push(t.waHorasLabel + state.horas + t.waHorasMinSuffix);
+    if (state.service === 'rental') lines.push(t.waModalidadLabel + (state.rentalType === 'dia' ? t.waFullDay : t.waByHour));
+    lines.push(t.waPassengersLabel + state.passengers);
+    if (state.name) lines.push(t.waNameLabel + state.name);
+    if (state.phone) lines.push(t.waPhoneLabel + state.phone);
+    return lines.join('\n');
+  }
+
+  var ICONS = {
+    whatsapp:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 1 1-3.8-7.1"></path><path d="M21 3l-6 6"></path><path d="M8 10h.01M12 10h.01M16 10h.01"></path></svg>',
+    car:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--petrol)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13.5l1.4-4.4A2 2 0 0 1 6.3 7.6h11.4a2 2 0 0 1 1.9 1.5L21 13.5"></path><path d="M2.5 13.5h19v3.2a1 1 0 0 1-1 1h-1.2a1 1 0 0 1-1-1v-.7H5.7v.7a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1z"></path><circle cx="7" cy="17.7" r="1.4"></circle><circle cx="17" cy="17.7" r="1.4"></circle></svg>',
+    globe:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.3 2.8 2.3 15.2 0 18M12 3c-2.3 2.8-2.3 15.2 0 18"></path></svg>',
+    globeBig:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta-strong)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.3 2.8 2.3 15.2 0 18M12 3c-2.3 2.8-2.3 15.2 0 18"></path></svg>',
+    map:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta-strong)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 9l-2 6-6 2 2-6z"></path></svg>',
+    chat:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta-strong)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4c-8.5 0-16 4.3-16 14.3 10.6 0 14.9-8.5 14.9-14.3z"></path><path d="M6 18.3c2.1-4.3 6.4-6.4 10.6-10.6"></path></svg>',
+    plane:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--petrol)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-3 2v1.5l4.5-1.5 4.5 1.5V21l-3-2v-5.5z"></path></svg>',
+    clock:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--petrol)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>',
+    pin:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--petrol)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"></path><circle cx="12" cy="9" r="2.4"></circle></svg>',
+    carSmall:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--petrol)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13.5l1.4-4.4A2 2 0 0 1 6.3 7.6h11.4a2 2 0 0 1 1.9 1.5L21 13.5"></path><path d="M2.5 13.5h19v3.2a1 1 0 0 1-1 1h-1.2a1 1 0 0 1-1-1v-.7H5.7v.7a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1z"></path><circle cx="7" cy="17.7" r="1.3"></circle><circle cx="17" cy="17.7" r="1.3"></circle></svg>',
+    chevron:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>',
+    check:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>',
+    mail:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>',
+    calendar:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>',
+    cash:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--petrol)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="2"></rect><circle cx="12" cy="12" r="2.3"></circle></svg>',
+    bank:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--petrol)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-5 9 5"></path><path d="M5 10v8M9 10v8M15 10v8M19 10v8"></path><path d="M3 20h18"></path></svg>',
+    card:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--petrol)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 9h20"></path></svg>'
+  };
+
+  function render(){
+    var t = ALL_T[state.lang] || ALL_T.es;
+
+    var sel = null;
+    for (var i = 0; i < ALL.length; i++) { if (ALL[i].name === state.zone) { sel = ALL[i]; break; } }
+    var isOfficial = sel ? (OFFICIAL.indexOf(sel) > -1) : false;
+    var fareText = sel ? ('$' + sel.fare + ' MXN') : '—';
+    var fareBadge = sel ? (isOfficial ? t.fareBadgeOfficial : t.fareBadgeEstimated) : '';
+    var fareBadgeColor = sel ? (isOfficial ? 'var(--petrol)' : 'var(--terracotta-strong)') : 'var(--ink-soft)';
+
+    var waBase = 'https://wa.me/529992005550?text=';
+    var waLink = waBase + encodeURIComponent(buildBookingMessage(t));
+    var waLinkGeneral = waBase + encodeURIComponent(t.waGeneralMsg);
+
+    var activeBg = 'var(--petrol)', activeFg = 'var(--white)', idleBg = 'var(--white)', idleFg = 'var(--ink)';
+    var langActiveBg = 'var(--terracotta-strong)', langActiveFg = 'var(--white)', langIdleBg = 'transparent', langIdleFg = 'var(--ink)';
+
+    function svcBtn(key, label){
+      var active = state.service === key;
+      return '<button type="button" data-action="setService" data-service="'+key+'" aria-pressed="'+active+'" style="padding:10px 16px;border-radius:999px;font-size:16.5px;font-weight:700;border:1.5px solid var(--petrol);background:'+(active?activeBg:idleBg)+';color:'+(active?activeFg:idleFg)+';cursor:pointer">'+esc(label)+'</button>';
+    }
+    function langBtn(code, label){
+      var active = state.lang === code;
+      return '<button type="button" data-action="setLang" data-lang="'+code+'" aria-pressed="'+active+'" style="padding:6px 10px;border-radius:999px;border:none;font-size:21px;font-weight:800;background:'+(active?langActiveBg:langIdleBg)+';color:'+(active?langActiveFg:langIdleFg)+'">'+code.toUpperCase()+'</button>';
+    }
+
+    var destinoOptionsFixed = ['Progreso','Celestún','Sisal','Uxmal','Chichén Itzá'].map(function(d){
+      return '<option value="'+esc(d)+'"'+(state.destino===d?' selected':'')+'>'+esc(d)+'</option>';
+    }).join('');
+
+    var html = ''+
+    '<div lang="'+state.lang+'" style="width:100%;overflow-x:hidden;background:var(--cream)">'+
+
+    '<header style="position:sticky;top:0;z-index:40;background:rgba(251,243,230,0.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)">'+
+      '<div style="max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'+
+        '<a href="#top" style="display:flex;align-items:center;gap:10px;text-decoration:none">'+
+          ICONS.car+
+          '<span style="line-height:1.05">'+
+            '<span style="display:block;font-family:\'Baloo 2\';font-weight:800;font-size:22px;color:var(--terracotta)">Mayab</span>'+
+            '<span class="navlabel" style="display:block;font-family:\'Baloo 2\';font-weight:700;font-size:21px;color:var(--petrol);letter-spacing:.06em">PRIVATE DRIVERS</span>'+
+          '</span>'+
+        '</a>'+
+        '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">'+
+          '<nav style="display:flex;align-items:center;gap:18px">'+
+            '<a href="#servicios" class="navlabel" style="font-weight:600;font-size:16.5px;color:var(--ink)">'+esc(t.navServices)+'</a>'+
+            '<a href="#tarifas" class="navlabel" style="font-weight:600;font-size:16.5px;color:var(--ink)">'+esc(t.navTarifas)+'</a>'+
+            '<a href="#sobre-mi" class="navlabel" style="font-weight:600;font-size:16.5px;color:var(--ink)">'+esc(t.navSobreMi)+'</a>'+
+          '</nav>'+
+          '<div role="group" aria-label="Idioma / Language" style="display:flex;gap:4px;background:var(--cream-soft);padding:4px;border-radius:999px">'+
+            langBtn('es')+langBtn('en')+langBtn('fr')+langBtn('it')+
+          '</div>'+
+          '<a href="'+waLinkGeneral+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:var(--terracotta-strong);color:var(--white);font-weight:700;font-size:16.5px;padding:10px 18px;border-radius:999px;white-space:nowrap">'+ICONS.whatsapp+'WhatsApp</a>'+
+        '</div>'+
+      '</div>'+
+    '</header>'+
+
+    '<section id="top" style="position:relative;background:var(--petrol-deep);color:var(--white);overflow:hidden">'+
+      '<svg aria-hidden="true" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:170px;opacity:0.14"><path d="M0 300 L0 210 L60 210 L60 150 L90 150 L90 120 L105 120 L105 95 L120 95 L120 120 L135 120 L135 150 L165 150 L165 210 L260 210 L260 230 L340 230 L340 190 L380 190 L380 160 L400 160 L400 130 L415 100 L430 130 L430 160 L450 160 L450 190 L490 190 L490 230 L620 230 L620 200 L660 200 L660 230 L900 230 L900 190 L940 190 L940 150 L960 150 L960 125 L975 125 L975 150 L995 150 L995 190 L1035 190 L1035 230 L1200 230 L1200 300 Z" fill="var(--white)"></path></svg>'+
+      '<div style="max-width:1180px;margin:0 auto;padding:68px 20px 96px;position:relative;display:flex;flex-wrap:wrap;gap:44px;align-items:center">'+
+        '<div style="flex:1 1 440px;min-width:280px">'+
+          '<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px solid var(--petrol-line);padding:7px 16px;border-radius:999px;font-size:21px;font-weight:600;margin-bottom:20px">'+ICONS.globe+esc(t.heroBadge)+'</div>'+
+          '<h1 style="margin:0 0 16px;font-size:clamp(32px,5.2vw,52px);font-weight:800;line-height:1.08">'+esc(t.heroTitle)+'</h1>'+
+          '<p style="margin:0 0 30px;font-size:20px;line-height:1.68;color:rgba(255,255,255,0.88);max-width:480px">'+esc(t.heroPara)+'</p>'+
+          '<div style="display:flex;flex-wrap:wrap;gap:14px">'+
+            '<a href="#reservar" style="background:var(--terracotta-strong);color:var(--white);font-weight:700;padding:14px 26px;border-radius:999px;font-size:17.5px;display:inline-flex;align-items:center;gap:10px">'+ICONS.globe+esc(t.heroCta1)+'</a>'+
+            '<a href="#tarifas" style="background:transparent;border:1.5px solid rgba(255,255,255,0.5);color:var(--white);font-weight:700;padding:14px 26px;border-radius:999px;font-size:17.5px">'+esc(t.heroCta2)+'</a>'+
+          '</div>'+
+        '</div>'+
+        '<div style="flex:1 1 300px;min-width:260px;display:flex;justify-content:center">'+
+          '<div style="background:rgba(255,255,255,0.08);border:1px solid var(--petrol-line);border-radius:20px;padding:26px 28px;max-width:300px;width:100%">'+
+            '<div style="font-family:\'Baloo 2\';font-weight:700;font-size:21px;letter-spacing:.04em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:14px">'+esc(t.vehicleLabel)+'</div>'+
+            '<div style="font-family:\'Baloo 2\';font-weight:700;font-size:22px;margin-bottom:4px">'+esc(t.vehicleName)+'</div>'+
+            '<div style="font-size:16.5px;color:rgba(255,255,255,0.78);margin-bottom:18px">'+esc(t.vehicleSub)+'</div>'+
+            '<div style="display:flex;flex-direction:column;gap:10px;font-size:16.5px">'+
+              '<div style="display:flex;align-items:center;gap:10px">'+ICONS.check+' '+esc(t.vehicleBullet1)+'</div>'+
+              '<div style="display:flex;align-items:center;gap:10px">'+ICONS.check+' '+esc(t.vehicleBullet2)+'</div>'+
+              '<div style="display:flex;align-items:center;gap:10px">'+ICONS.check+' '+esc(t.vehicleBullet3)+'</div>'+
+            '</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</section>'+
+
+    '<section style="padding:64px 20px">'+
+      '<div style="max-width:1180px;margin:0 auto">'+
+        '<h2 style="margin:0 0 10px;font-size:clamp(24px,3.4vw,34px);font-weight:700;color:var(--ink)">'+esc(t.diffTitle)+'</h2>'+
+        '<p style="margin:0;font-size:17.5px;color:var(--ink-soft);max-width:620px;line-height:1.6">'+esc(t.diffSub)+'</p>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:22px;margin-top:34px">'+
+          '<div style="flex:1 1 280px;min-width:240px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:26px">'+
+            '<div style="width:44px;height:44px;border-radius:12px;background:var(--cream-soft);display:flex;align-items:center;justify-content:center;margin-bottom:16px">'+ICONS.globeBig+'</div>'+
+            '<h3 style="margin:0 0 8px;font-size:20px;font-weight:700;color:var(--ink)">'+esc(t.diffCard1Title)+'</h3>'+
+            '<p style="margin:0;font-size:21px;line-height:1.68;color:var(--ink-soft)">'+esc(t.diffCard1Desc)+'</p>'+
+          '</div>'+
+          '<div style="flex:1 1 280px;min-width:240px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:26px">'+
+            '<div style="width:44px;height:44px;border-radius:12px;background:var(--cream-soft);display:flex;align-items:center;justify-content:center;margin-bottom:16px">'+ICONS.map+'</div>'+
+            '<h3 style="margin:0 0 8px;font-size:20px;font-weight:700;color:var(--ink)">'+esc(t.diffCard2Title)+'</h3>'+
+            '<p style="margin:0;font-size:21px;line-height:1.68;color:var(--ink-soft)">'+esc(t.diffCard2Desc)+'</p>'+
+          '</div>'+
+          '<div style="flex:1 1 280px;min-width:240px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:26px">'+
+            '<div style="width:44px;height:44px;border-radius:12px;background:var(--cream-soft);display:flex;align-items:center;justify-content:center;margin-bottom:16px">'+ICONS.chat+'</div>'+
+            '<h3 style="margin:0 0 8px;font-size:20px;font-weight:700;color:var(--ink)">'+esc(t.diffCard3Title)+'</h3>'+
+            '<p style="margin:0;font-size:21px;line-height:1.68;color:var(--ink-soft)">'+esc(t.diffCard3Desc)+'</p>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</section>'+
+
+    '<section id="servicios" style="padding:64px 20px;background:var(--cream-soft)">'+
+      '<div style="max-width:1180px;margin:0 auto">'+
+        '<h2 style="margin:0 0 10px;font-size:clamp(24px,3.4vw,34px);font-weight:700;color:var(--ink)">'+esc(t.servicesTitle)+'</h2>'+
+        '<p style="margin:0;font-size:17.5px;color:var(--ink-soft);max-width:620px;line-height:1.6">'+esc(t.servicesSub)+'</p>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:20px;margin-top:34px">'+
+          '<div style="flex:1 1 250px;min-width:230px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">'+ICONS.plane+'<h3 style="margin:0;font-size:21px;font-weight:700;color:var(--ink)">'+esc(t.svc1Title)+'</h3><p style="margin:0;font-size:16.5px;line-height:1.65;color:var(--ink-soft);flex:1">'+esc(t.svc1Desc)+'</p><a href="#tarifas" style="font-weight:700;font-size:16.5px">'+esc(t.svc1Cta)+'</a></div>'+
+          '<div style="flex:1 1 250px;min-width:230px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">'+ICONS.clock+'<h3 style="margin:0;font-size:21px;font-weight:700;color:var(--ink)">'+esc(t.svc2Title)+'</h3><p style="margin:0;font-size:16.5px;line-height:1.65;color:var(--ink-soft);flex:1">'+esc(t.svc2Desc)+'</p><button type="button" data-action="setService" data-service="hourly" data-scroll="reservar" style="all:unset;font-weight:700;font-size:16.5px;color:var(--terracotta-strong);cursor:pointer">'+esc(t.svc2Cta)+'</button></div>'+
+          '<div style="flex:1 1 250px;min-width:230px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">'+ICONS.pin+'<h3 style="margin:0;font-size:21px;font-weight:700;color:var(--ink)">'+esc(t.svc3Title)+'</h3><p style="margin:0;font-size:16.5px;line-height:1.65;color:var(--ink-soft);flex:1">'+esc(t.svc3Desc)+'</p><a href="#destinos" style="font-weight:700;font-size:16.5px">'+esc(t.svc3Cta)+'</a></div>'+
+          '<div style="flex:1 1 250px;min-width:230px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">'+ICONS.carSmall+'<h3 style="margin:0;font-size:21px;font-weight:700;color:var(--ink)">'+esc(t.svc4Title)+'</h3><p style="margin:0;font-size:16.5px;line-height:1.65;color:var(--ink-soft);flex:1">'+esc(t.svc4Desc)+'</p><button type="button" data-action="setService" data-service="rental" data-scroll="reservar" style="all:unset;font-weight:700;font-size:16.5px;color:var(--terracotta-strong);cursor:pointer">'+esc(t.svc4Cta)+'</button></div>'+
+        '</div>'+
+        '<div id="destinos" style="margin-top:44px">'+
+          '<h3 style="margin:0 0 16px;font-size:21px;font-weight:700;color:var(--ink)">'+esc(t.destinosTitle)+'</h3>'+
+          '<div style="display:flex;flex-wrap:wrap;gap:16px">'+
+            ['Progreso','Celestún','Sisal','Uxmal','Chichén Itzá'].map(function(name){
+              var descKey = {Progreso:'destProgresoDesc', 'Celestún':'destCelestunDesc', Sisal:'destSisalDesc', Uxmal:'destUxmalDesc', 'Chichén Itzá':'destChichenDesc'}[name];
+              return '<button type="button" data-action="pickDestino" data-destino="'+esc(name)+'" data-scroll="reservar" style="all:unset;flex:1 1 220px;min-width:200px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer">'+
+                '<div style="font-weight:700;font-size:21px;color:var(--ink);margin-bottom:4px">'+esc(name)+'</div>'+
+                '<div style="font-size:21px;color:var(--ink-soft);line-height:1.5">'+esc(t[descKey])+'</div>'+
+              '</button>';
+            }).join('')+
+          '</div>'+
+          '<p style="margin:14px 0 0;font-size:21px;color:var(--ink-soft)">'+esc(t.destinosHelper)+'</p>'+
+        '</div>'+
+      '</div>'+
+    '</section>'+
+
+    '<section id="tarifas" style="padding:64px 20px">'+
+      '<div style="max-width:1180px;margin:0 auto">'+
+        '<h2 style="margin:0 0 10px;font-size:clamp(24px,3.4vw,34px);font-weight:700;color:var(--ink)">'+esc(t.tarifasTitle)+'</h2>'+
+        '<p style="margin:0 0 30px;font-size:17.5px;color:var(--ink-soft);max-width:680px;line-height:1.6">'+esc(t.tarifasIntro)+'</p>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">'+
+          '<div style="flex:1 1 320px;min-width:280px;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:26px">'+
+            '<label for="zoneSelectCalc" style="display:block;font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:10px">'+esc(t.zoneSelectLabel)+'</label>'+
+            '<select id="zoneSelectCalc" data-bind="zone" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);font-size:21px;color:var(--ink);background:var(--cream)">'+
+              '<option value="">'+esc(t.zonePlaceholder)+'</option>'+
+              '<optgroup label="'+esc(t.officialGroupLabel)+'">'+optionsFor(OFFICIAL,true)+'</optgroup>'+
+              '<optgroup label="'+esc(t.estimatedGroupLabel)+'">'+optionsFor(ESTIMATED,true)+'</optgroup>'+
+            '</select>'+
+            '<div style="margin-top:22px;padding-top:22px;border-top:1px solid var(--line)">'+
+              '<div style="font-size:21px;color:var(--ink-soft);margin-bottom:4px">'+esc(t.fareLabel)+'</div>'+
+              '<div style="font-family:\'Baloo 2\';font-weight:800;font-size:40px;color:var(--terracotta)">'+fareText+'</div>'+
+              (sel?('<div style="display:inline-block;margin-top:8px;font-size:21px;font-weight:700;color:'+fareBadgeColor+';background:var(--cream-soft);padding:5px 12px;border-radius:999px">'+esc(fareBadge)+'</div>'):'')+
+            '</div>'+
+          '</div>'+
+          '<div style="flex:1 1 380px;min-width:280px">'+
+            '<button type="button" data-action="toggleFullTable" aria-expanded="'+state.showFullTable+'" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:21px;color:var(--ink);background:var(--cream-soft);padding:12px 18px;border-radius:999px;margin-bottom:18px">'+esc(t.viewFullBtn)+ICONS.chevron+'</button>'+
+            (state.showFullTable?(
+              '<div id="full-table" style="background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px;overflow-x:auto">'+
+                '<div style="font-family:\'Baloo 2\';font-weight:700;font-size:16.5px;color:var(--petrol);margin-bottom:8px">'+esc(t.officialTableHeading)+'</div>'+
+                '<table class="tbl"><thead><tr><th>'+esc(t.tblZoneHeader)+'</th><th>'+esc(t.tblFareHeader)+'</th></tr></thead><tbody>'+rowsFor(OFFICIAL)+'</tbody></table>'+
+                '<div style="font-family:\'Baloo 2\';font-weight:700;font-size:16.5px;color:var(--terracotta-strong);margin:20px 0 8px">'+esc(t.estimatedTableHeading)+'</div>'+
+                '<table class="tbl"><thead><tr><th>'+esc(t.tblZoneHeader)+'</th><th>'+esc(t.tblFareHeader)+'</th></tr></thead><tbody>'+rowsFor(ESTIMATED)+'</tbody></table>'+
+              '</div>'
+            ):'')+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</section>'+
+
+    '<section id="sobre-mi" style="padding:64px 20px;background:var(--petrol-deep);color:var(--white)">'+
+      '<div style="max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;gap:44px;align-items:flex-start">'+
+        '<div style="flex:0 0 auto;display:flex;justify-content:center;width:100%;max-width:180px">'+
+          '<div style="width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.1);border:2px solid var(--petrol-line);display:flex;align-items:center;justify-content:center;font-family:\'Baloo 2\';font-weight:800;font-size:42px">SM</div>'+
+        '</div>'+
+        '<div style="flex:1 1 440px;min-width:280px">'+
+          '<h2 style="margin:0 0 6px;font-size:clamp(22px,3vw,30px);font-weight:700">Sergio Muñoz de Alba Medrano</h2>'+
+          '<p style="margin:0 0 28px;font-size:21px;color:rgba(255,255,255,0.75);font-weight:600">'+esc(t.sobreMiRole)+'</p>'+
+          '<div style="font-family:\'Baloo 2\';font-weight:700;font-size:14px;letter-spacing:.06em;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-bottom:12px">'+esc(t.contactoTitle)+'</div>'+
+          '<div style="display:flex;flex-wrap:wrap;gap:10px">'+
+            '<a href="'+waLinkGeneral+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;font-size:17px;font-weight:700;color:var(--white);background:rgba(255,255,255,0.12);border:1px solid var(--petrol-line);padding:9px 16px;border-radius:999px">'+ICONS.whatsapp+'+52 999 200 5550</a>'+
+            '<a href="mailto:mayabprivatedriver@gmail.com" style="display:inline-flex;align-items:center;gap:8px;font-size:17px;font-weight:700;color:var(--white);background:rgba(255,255,255,0.12);border:1px solid var(--petrol-line);padding:9px 16px;border-radius:999px">'+ICONS.mail+'mayabprivatedriver@gmail.com</a>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</section>'+
+
+    '<section id="reservar" style="padding:64px 20px">'+
+      '<div style="max-width:680px;margin:0 auto">'+
+        '<h2 style="margin:0 0 10px;font-size:clamp(24px,3.4vw,34px);font-weight:700;color:var(--ink)">'+esc(t.reservarTitle)+'</h2>'+
+        '<p style="margin:0 0 30px;font-size:17.5px;color:var(--ink-soft);line-height:1.6">'+esc(t.reservarSub)+'</p>'+
+        '<div style="background:var(--white);border:1px solid var(--line);border-radius:18px;padding:28px">'+
+          '<div style="font-weight:700;font-size:21px;color:var(--ink-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em">'+esc(t.serviceToggleLabel)+'</div>'+
+          '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px">'+
+            svcBtn('transfer', t.svcNameTransfer)+svcBtn('hourly', t.svcNameHourly)+svcBtn('destino', t.svcNameDestino)+svcBtn('rental', t.svcNameRental)+
+          '</div>'+
+
+          (state.service==='transfer'?(
+            '<div style="margin-bottom:20px">'+
+              '<label for="zoneSelectBooking" style="display:block;font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:8px">'+esc(t.zoneBookingLabel)+'</label>'+
+              '<select id="zoneSelectBooking" data-bind="zoneBooking" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);font-size:21px;color:var(--ink);background:var(--cream)">'+
+                '<option value="">'+esc(t.zoneBookingPlaceholder)+'</option>'+
+                '<optgroup label="'+esc(t.officialGroupLabel)+'">'+optionsFor(OFFICIAL,false)+'</optgroup>'+
+                '<optgroup label="'+esc(t.estimatedGroupLabel)+'">'+optionsFor(ESTIMATED,false)+'</optgroup>'+
+              '</select>'+
+            '</div>'
+          ):'')+
+
+          (state.service==='destino'?(
+            '<div style="margin-bottom:20px">'+
+              '<label for="destinoSelect" style="display:block;font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:8px">'+esc(t.destinoLabel)+'</label>'+
+              '<select id="destinoSelect" data-bind="destino" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);font-size:21px;color:var(--ink);background:var(--cream)">'+destinoOptionsFixed+'</select>'+
+            '</div>'
+          ):'')+
+
+          (state.service==='hourly'?(
+            '<div style="margin-bottom:20px">'+
+              '<label for="horasInput" style="display:block;font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:8px">'+esc(t.horasLabel)+'</label>'+
+              '<input id="horasInput" type="number" min="3" max="12" value="'+state.horas+'" data-bind="horas" style="width:120px;padding:12px 14px;border-radius:10px;border:1px solid var(--line);font-size:21px;color:var(--ink);background:var(--cream)">'+
+            '</div>'
+          ):'')+
+
+          (state.service==='rental'?(
+            '<div style="margin-bottom:20px">'+
+              '<div style="font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:8px">'+esc(t.modalidadLabel)+'</div>'+
+              '<div style="display:flex;gap:10px">'+
+                '<button type="button" data-action="setRental" data-rental="dia" style="padding:10px 16px;border-radius:10px;font-size:16.5px;font-weight:700;border:1.5px solid var(--petrol);background:'+(state.rentalType==='dia'?activeBg:idleBg)+';color:'+(state.rentalType==='dia'?activeFg:idleFg)+';cursor:pointer">'+esc(t.porDiaLabel)+'</button>'+
+                '<button type="button" data-action="setRental" data-rental="hora" style="padding:10px 16px;border-radius:10px;font-size:16.5px;font-weight:700;border:1.5px solid var(--petrol);background:'+(state.rentalType==='hora'?activeBg:idleBg)+';color:'+(state.rentalType==='hora'?activeFg:idleFg)+';cursor:pointer">'+esc(t.porHoraLabel)+'</button>'+
+              '</div>'+
+            '</div>'
+          ):'')+
+
+          '<div style="margin-bottom:20px">'+
+            '<div style="font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:8px">'+esc(t.pasajerosLabel)+'</div>'+
+            '<div style="display:flex;align-items:center;gap:16px">'+
+              '<button type="button" data-action="decPassengers" aria-label="'+esc(t.pasajerosLabel)+'" style="width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--cream);font-size:22px;font-weight:700;color:var(--ink);cursor:pointer">−</button>'+
+              '<span aria-live="polite" style="font-size:21px;font-weight:600;color:var(--ink);min-width:110px;text-align:center">'+state.passengers+' '+esc(t.pasajeroWord)+'</span>'+
+              '<button type="button" data-action="incPassengers" aria-label="'+esc(t.pasajerosLabel)+'" style="width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--cream);font-size:22px;font-weight:700;color:var(--ink);cursor:pointer">+</button>'+
+            '</div>'+
+          '</div>'+
+
+          '<div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:22px">'+
+            '<div style="flex:1 1 220px">'+
+              '<label for="nameInput" style="display:block;font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:8px">'+esc(t.nombreLabel)+'</label>'+
+              '<input id="nameInput" type="text" value="'+esc(state.name)+'" data-bind="name" placeholder="'+esc(t.nombrePh)+'" style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1px solid var(--line);font-size:21px;color:var(--ink);background:var(--cream)">'+
+            '</div>'+
+            '<div style="flex:1 1 220px">'+
+              '<label for="phoneInput" style="display:block;font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:8px">'+esc(t.telLabel)+'</label>'+
+              '<input id="phoneInput" type="tel" value="'+esc(state.phone)+'" data-bind="phone" placeholder="'+esc(t.telPh)+'" style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1px solid var(--line);font-size:21px;color:var(--ink);background:var(--cream)">'+
+            '</div>'+
+          '</div>'+
+
+          '<a href="'+waLink+'" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;background:var(--terracotta-strong);color:var(--white);font-weight:700;font-size:17.5px;padding:16px;border-radius:12px">'+ICONS.whatsapp+esc(t.submitBtn)+'</a>'+
+
+          '<div style="display:flex;align-items:center;gap:12px;margin:22px 0">'+
+            '<div style="flex:1;height:1px;background:var(--line)"></div>'+
+            '<span style="font-size:14px;color:var(--ink-soft);font-weight:600">'+esc(t.orLabel)+'</span>'+
+            '<div style="flex:1;height:1px;background:var(--line)"></div>'+
+          '</div>'+
+
+          '<a href="https://calendly.com/mayabprivatedriver" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;background:var(--white);border:1.5px solid var(--petrol);color:var(--petrol);font-weight:700;font-size:17.5px;padding:16px;border-radius:12px">'+ICONS.calendar+esc(t.calendlyBtn)+'</a>'+
+        '</div>'+
+      '</div>'+
+    '</section>'+
+
+    '<section style="padding:64px 20px;background:var(--cream-soft)">'+
+      '<div style="max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;gap:28px">'+
+        '<div style="flex:1 1 320px;min-width:260px;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:28px">'+
+          '<h3 style="margin:0 0 18px;font-size:21px;font-weight:700;color:var(--ink)">'+esc(t.contactoTitle)+'</h3>'+
+          '<a href="'+waLinkGeneral+'" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;margin-bottom:16px">'+ICONS.whatsapp+'<span style="font-weight:700;font-size:17.5px;color:var(--ink)">WhatsApp +52 999 200 5550</span></a>'+
+          '<p style="margin:0 0 6px;font-size:21px;color:var(--ink-soft)">'+esc(t.contactoZona)+'</p>'+
+          '<p style="margin:0;font-size:21px;color:var(--ink-soft)">'+esc(t.contactoDisponibilidad)+'</p>'+
+        '</div>'+
+        '<div style="flex:1 1 320px;min-width:260px;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:28px">'+
+          '<h3 style="margin:0 0 18px;font-size:21px;font-weight:700;color:var(--ink)">'+esc(t.pagoTitle)+'</h3>'+
+          '<div style="display:flex;flex-direction:column;gap:14px">'+
+            '<div style="display:flex;align-items:center;gap:12px">'+ICONS.cash+'<span style="font-size:21px;color:var(--ink)">'+esc(t.efectivoLabel)+'</span></div>'+
+            '<div style="display:flex;align-items:center;gap:12px">'+ICONS.bank+'<span style="font-size:21px;color:var(--ink)">'+esc(t.transferenciaLabel)+'</span></div>'+
+            '<div style="display:flex;align-items:center;gap:12px">'+ICONS.card+'<span style="font-size:21px;color:var(--ink)">'+esc(t.tarjetaLabel)+'</span></div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</section>'+
+
+    '<footer style="padding:30px 20px;text-align:center;color:var(--ink-soft);font-size:21px">'+esc(t.footerText)+'</footer>'+
+
+    '</div>';
+
+    document.getElementById('app').innerHTML = html;
+    attachListeners();
+  }
+
+  function attachListeners(){
+    var root = document.getElementById('app');
+
+    root.querySelectorAll('[data-action="setLang"]').forEach(function(btn){
+      btn.addEventListener('click', function(){ state.lang = btn.getAttribute('data-lang'); render(); });
+    });
+    root.querySelectorAll('[data-action="setService"]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        state.service = btn.getAttribute('data-service');
+        render();
+        var scrollTo = btn.getAttribute('data-scroll');
+        if (scrollTo) {
+          setTimeout(function(){
+            var el = document.getElementById(scrollTo);
+            if (el) el.scrollIntoView({behavior:'smooth'});
+          }, 30);
+        }
+      });
+    });
+    root.querySelectorAll('[data-action="pickDestino"]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        state.service = 'destino';
+        state.destino = btn.getAttribute('data-destino');
+        render();
+        setTimeout(function(){
+          var el = document.getElementById('reservar');
+          if (el) el.scrollIntoView({behavior:'smooth'});
+        }, 30);
+      });
+    });
+    root.querySelectorAll('[data-action="setRental"]').forEach(function(btn){
+      btn.addEventListener('click', function(){ state.rentalType = btn.getAttribute('data-rental'); render(); });
+    });
+    var toggleBtn = root.querySelector('[data-action="toggleFullTable"]');
+    if (toggleBtn) toggleBtn.addEventListener('click', function(){ state.showFullTable = !state.showFullTable; render(); });
+    var incBtn = root.querySelector('[data-action="incPassengers"]');
+    if (incBtn) incBtn.addEventListener('click', function(){ state.passengers = Math.min(4, state.passengers+1); render(); });
+    var decBtn = root.querySelector('[data-action="decPassengers"]');
+    if (decBtn) decBtn.addEventListener('click', function(){ state.passengers = Math.max(1, state.passengers-1); render(); });
+
+    root.querySelectorAll('[data-bind]').forEach(function(el){
+      var key = el.getAttribute('data-bind');
+      var evt = (el.tagName === 'SELECT') ? 'change' : 'input';
+      el.addEventListener(evt, function(){
+        if (key === 'horas') {
+          var v = parseInt(el.value || '3', 10);
+          if (isNaN(v)) v = 3;
+          state.horas = Math.max(3, v);
+        } else {
+          state[key] = el.value;
+        }
+        // Avoid re-render stealing focus from text inputs while typing; only full re-render on select/blur-like fields.
+        if (el.tagName === 'SELECT' || key === 'horas') {
+          render();
+        }
+      });
+      if (el.tagName !== 'SELECT' && key !== 'horas') {
+        el.addEventListener('blur', function(){ render(); });
+      }
+    });
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
