@@ -136,6 +136,10 @@ select,input{font-family:inherit}
       destSisalDesc:'Pueblo pesquero tranquilo, playa sin multitudes y buena comida frente al mar.',
       destUxmalDesc:'Pirámides mayas con menos multitudes que Chichén Itzá.',
       destChichenDesc:'La zona arqueológica más visitada de Yucatán.',
+      destIzamalDesc:'El pueblo mágico amarillo, convento franciscano y pirámide Kinich Kakmó.',
+      destEdznaDesc:'Zona arqueológica menos concurrida en Campeche — día largo, pocas multitudes.',
+      destChichenValladolidDesc:'Chichén Itzá por la mañana y Valladolid (Zací, centro histórico) por la tarde, mismo día.',
+      destDayFull:'Día completo', destHalfDay:'Medio día', destDayExt:'Día completo extendido',
       tarifasTitle:'Tarifas de transfer aeropuerto', tarifasIntro:'Tarifa plana por vehículo completo (hasta 4 pasajeros), no por persona. Solo se cobra el tramo con pasajero a bordo, entre tu zona y el aeropuerto.',
       zoneSelectLabel:'¿Dónde vives o te hospedas?', zonePlaceholder:'Selecciona tu colonia o fraccionamiento…',
       officialGroupLabel:'Tarifario de referencia oficial', estimatedGroupLabel:'Zonas estimadas (sin tarifario oficial)',
@@ -186,6 +190,10 @@ select,input{font-family:inherit}
       destSisalDesc:'A quiet fishing village, an uncrowded beach, and good food right on the water.',
       destUxmalDesc:'Maya pyramids with far fewer crowds than Chichén Itzá.',
       destChichenDesc:"Yucatán's most visited archaeological site.",
+      destIzamalDesc:'The yellow magic town — Franciscan convent and the Kinich Kakmó pyramid.',
+      destEdznaDesc:'A quieter archaeological site in Campeche — long day, far fewer crowds.',
+      destChichenValladolidDesc:'Chichén Itzá in the morning and Valladolid (Zací, historic center) in the afternoon, same day.',
+      destDayFull:'Full day', destHalfDay:'Half day', destDayExt:'Extended full day',
       tarifasTitle:'Airport transfer rates', tarifasIntro:"A flat rate for the whole vehicle (up to 4 passengers), not per person. You're only charged for the leg with a passenger on board, between your zone and the airport.",
       zoneSelectLabel:'Where are you staying?', zonePlaceholder:'Pick your neighborhood…',
       officialGroupLabel:'Official reference rates', estimatedGroupLabel:'Estimated zones (not officially listed)',
@@ -236,6 +244,10 @@ select,input{font-family:inherit}
       destSisalDesc:'Un village de pêcheurs tranquille, une plage sans foule, et de la bonne cuisine face à la mer.',
       destUxmalDesc:'Pyramides mayas, avec bien moins de monde qu’à Chichén Itzá.',
       destChichenDesc:'Le site archéologique le plus visité du Yucatán.',
+      destIzamalDesc:'La ville magique jaune — couvent franciscain et pyramide Kinich Kakmó.',
+      destEdznaDesc:'Site archéologique plus tranquille au Campeche — longue journée, peu de monde.',
+      destChichenValladolidDesc:'Chichén Itzá le matin et Valladolid (Zací, centre historique) l’après-midi, le même jour.',
+      destDayFull:'Journée complète', destHalfDay:'Demi-journée', destDayExt:'Journée complète prolongée',
       tarifasTitle:'Tarifs des transferts aéroport', tarifasIntro:"Tarif fixe pour tout le véhicule (jusqu'à 4 passagers), pas par personne. Seul le trajet avec passager à bord, entre votre zone et l'aéroport, est facturé.",
       zoneSelectLabel:'Où logez-vous ?', zonePlaceholder:'Choisissez votre quartier…',
       officialGroupLabel:'Tarifs de référence officiels', estimatedGroupLabel:'Zones estimées (hors tarif officiel)',
@@ -286,6 +298,10 @@ select,input{font-family:inherit}
       destSisalDesc:'Un tranquillo villaggio di pescatori, una spiaggia senza folla e buon pesce vista mare.',
       destUxmalDesc:'Piramidi maya con molta meno folla rispetto a Chichén Itzá.',
       destChichenDesc:'Il sito archeologico più visitato dello Yucatán.',
+      destIzamalDesc:'Il pueblo magico giallo — convento francescano e piramide Kinich Kakmó.',
+      destEdznaDesc:'Sito archeologico più tranquillo in Campeche — giornata lunga, poca folla.',
+      destChichenValladolidDesc:'Chichén Itzá al mattino e Valladolid (Zací, centro storico) nel pomeriggio, stesso giorno.',
+      destDayFull:'Giornata intera', destHalfDay:'Mezza giornata', destDayExt:'Giornata intera estesa',
       tarifasTitle:'Tariffe transfer aeroportuale', tarifasIntro:"Tariffa fissa per l'intero veicolo (fino a 4 passeggeri), non a persona. Si paga solo la tratta con passeggero a bordo, tra la tua zona e l'aeroporto.",
       zoneSelectLabel:'Dove alloggi?', zonePlaceholder:'Scegli il tuo quartiere…',
       officialGroupLabel:'Tariffe di riferimento ufficiali', estimatedGroupLabel:'Zone stimate (senza tariffa ufficiale)',
@@ -329,6 +345,14 @@ select,input{font-family:inherit}
     phone: ''
   };
 
+  var DEST_PRICES = {
+    'Uxmal': {price:'$2,200–2,600 MXN', durationKey:'destDayFull'},
+    'Chichén Itzá': {price:'$3,000–3,800 MXN', durationKey:'destDayFull'},
+    'Chichén Itzá + Valladolid': {price:'$3,600–4,400 MXN', durationKey:'destDayExt'},
+    'Sisal': {price:'$1,500–1,800 MXN', durationKey:'destHalfDay'},
+    'Izamal': {price:'$1,400–1,700 MXN', durationKey:'destHalfDay'},
+    'Edzná (Campeche)': {price:'$4,200–5,000 MXN', durationKey:'destDayExt'}
+  };
   function esc(s){
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
@@ -405,7 +429,7 @@ select,input{font-family:inherit}
       return '<button type="button" data-action="setLang" data-lang="'+code+'" aria-pressed="'+active+'" style="padding:6px 10px;border-radius:999px;border:none;font-size:21px;font-weight:800;background:'+(active?langActiveBg:langIdleBg)+';color:'+(active?langActiveFg:langIdleFg)+'">'+code.toUpperCase()+'</button>';
     }
 
-    var destinoOptionsFixed = ['Progreso','Celestún','Sisal','Uxmal','Chichén Itzá'].map(function(d){
+    var destinoOptionsFixed = ['Progreso','Celestún','Sisal','Uxmal','Chichén Itzá','Izamal','Edzná (Campeche)','Chichén Itzá + Valladolid'].map(function(d){
       return '<option value="'+esc(d)+'"'+(state.destino===d?' selected':'')+'>'+esc(d)+'</option>';
     }).join('');
 
@@ -500,11 +524,16 @@ select,input{font-family:inherit}
         '<div id="destinos" style="margin-top:44px">'+
           '<h3 style="margin:0 0 16px;font-size:21px;font-weight:700;color:var(--ink)">'+esc(t.destinosTitle)+'</h3>'+
           '<div style="display:flex;flex-wrap:wrap;gap:16px">'+
-            ['Progreso','Celestún','Sisal','Uxmal','Chichén Itzá'].map(function(name){
-              var descKey = {Progreso:'destProgresoDesc', 'Celestún':'destCelestunDesc', Sisal:'destSisalDesc', Uxmal:'destUxmalDesc', 'Chichén Itzá':'destChichenDesc'}[name];
+            ['Progreso','Celestún','Sisal','Uxmal','Chichén Itzá','Izamal','Edzná (Campeche)','Chichén Itzá + Valladolid'].map(function(name){
+              var descKey = {Progreso:'destProgresoDesc', 'Celestún':'destCelestunDesc', Sisal:'destSisalDesc', Uxmal:'destUxmalDesc', 'Chichén Itzá':'destChichenDesc', Izamal:'destIzamalDesc', 'Edzná (Campeche)':'destEdznaDesc', 'Chichén Itzá + Valladolid':'destChichenValladolidDesc'}[name];
+              var priceInfo = DEST_PRICES[name];
               return '<button type="button" data-action="pickDestino" data-destino="'+esc(name)+'" data-scroll="reservar" style="all:unset;flex:1 1 220px;min-width:200px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer">'+
                 '<div style="font-weight:700;font-size:21px;color:var(--ink);margin-bottom:4px">'+esc(name)+'</div>'+
                 '<div style="font-size:21px;color:var(--ink-soft);line-height:1.5">'+esc(t[descKey])+'</div>'+
+                (priceInfo?('<div style="margin-top:10px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px">'+
+                  '<span style="font-family:\'Baloo 2\';font-weight:800;font-size:19px;color:var(--terracotta-strong)">'+esc(priceInfo.price)+'</span>'+
+                  '<span style="font-size:14px;font-weight:700;color:var(--ink-soft);background:var(--cream-soft);padding:3px 10px;border-radius:999px">'+esc(t[priceInfo.durationKey])+'</span>'+
+                '</div>'):'')+
               '</button>';
             }).join('')+
           '</div>'+
