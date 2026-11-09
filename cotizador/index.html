@@ -81,6 +81,7 @@ var state = {
 };
 
 function pad2(n){ return (n<10?'0':'')+n; }
+function encAttr(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
 function gcalLink(r){
   var title = encodeURIComponent('Mayab — ' + (state.destino || 'Viaje') + (state.cliente ? (' · ' + state.cliente) : ''));
   var details = encodeURIComponent(
@@ -277,10 +278,9 @@ function render(){
           '<div><span>Costo total (piso)</span><strong>'+money(r.costoTotal)+'</strong></div>'+
         '</div>'+
         '<div class="action-row">'+
-          '<a class="action-btn cal" href="'+gcalLink(r)+'" target="_blank" rel="noopener">📅 Agregar a Calendar</a>'+
-          '<a class="action-btn reg" href="'+regLink(r)+'" target="_blank" rel="noopener">✅ Confirmar y registrar reserva</a>'+
+          '<button type="button" class="action-btn reg" data-action="confirmReserva" data-cal="'+encAttr(gcalLink(r))+'" data-reg="'+encAttr(regLink(r))+'" style="border:none;width:100%;cursor:pointer">✅ Confirmar reserva (agenda + registra)</button>'+
         '</div>'+
-        '<div class="hint" style="margin-top:8px;color:rgba(255,255,255,0.75)">Al confirmar, el viaje se guarda solo como "reservado" en tu registro — ahí lo marcas completado cuando termine.</div>'+
+        '<div class="hint" style="margin-top:8px;color:rgba(255,255,255,0.75)">Un clic hace las dos cosas: abre el evento en tu Google Calendar (para que te llegue el recordatorio) y guarda el viaje como "reservado" en tu registro.</div>'+
       '</div>'+
 
       '<p class="footer-note">Mismo modelo que tarifario_destinos_mayab.xlsx: gasolina real + casetas + $/hora de manejo y espera + margen, redondeado a $50. Ajusta el precio final con tu criterio de mercado antes de cotizar.</p>'+
@@ -314,6 +314,15 @@ function attachListeners(){
   });
   var advBtn = root.querySelector('[data-action="toggleAdv"]');
   if (advBtn) advBtn.addEventListener('click', function(){ state.advOpen = !state.advOpen; render(); });
+  var confirmBtn = root.querySelector('[data-action="confirmReserva"]');
+  if (confirmBtn) confirmBtn.addEventListener('click', function(){
+    var calUrl = confirmBtn.getAttribute('data-cal');
+    var regUrl = confirmBtn.getAttribute('data-reg');
+    // Un solo popup (el de Calendar) para no chocar con el bloqueador del navegador;
+    // el registro se abre navegando esta misma pestaña, ya que es el paso final.
+    window.open(calUrl, '_blank');
+    location.href = regUrl;
+  });
 }
 
 loadDefaults();
