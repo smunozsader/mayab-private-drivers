@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /cotizador/
 
 Sitemap: https://mayabprivatedrivers.com/sitemap.xml

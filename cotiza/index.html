@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Cotiza tu transfer o tour con Mayab Private Drivers, chofer privado bilingüe en Mérida. Precio al instante.">
+<meta name="theme-color" content="#0B413B">
+<title>Cotiza tu viaje — Mayab Private Drivers</title>
+<link rel="icon" href="../cotizador/icon-192.png">
+<style>
+:root{
+  --cream:#FBF3E6; --cream-soft:#F3E8D4; --ink:#15323A; --ink-soft:#52676B;
+  --petrol:#0E5950; --petrol-deep:#0B413B; --terracotta:#D2652E; --terracotta-strong:#B84F22;
+  --line:rgba(21,50,58,0.14); --white:#FFFFFF;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--cream);color:var(--ink);padding-bottom:max(20px,env(safe-area-inset-bottom,0));-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;margin:0}
+a{color:var(--terracotta-strong)}
+.wrap{max-width:560px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0)) 0 max(16px,env(safe-area-inset-left,0))}
+header{background:var(--petrol-deep);color:var(--white);padding:26px 0 30px}
+header .wrap{display:flex;align-items:center;gap:12px}
+header .logo{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:var(--terracotta);font-family:'Baloo 2';font-weight:800;font-size:21px;flex:none;border:1px solid rgba(255,255,255,0.2)}
+header h1{font-size:21px}
+header p{margin:2px 0 0;font-size:14px;color:rgba(255,255,255,0.75)}
+main{padding-top:22px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px}
+.card h2{font-size:14.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:14px}
+.toggle-group{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.toggle-btn{flex:1 1 auto;padding:11px 12px;border-radius:999px;border:1.5px solid var(--petrol);background:var(--cream);color:var(--petrol-deep);font-size:14.5px;font-weight:700;cursor:pointer;text-align:center}
+.toggle-btn.active{background:var(--petrol-deep);color:var(--white);border-color:var(--petrol-deep)}
+label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin:14px 0 6px}
+select,input[type=number]{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);font-size:16px;color:var(--ink);background:var(--cream);font-family:inherit}
+.row{display:flex;gap:10px}
+.row>div{flex:1;min-width:0}
+.hint{font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.5}
+.result{background:var(--petrol-deep);color:var(--white);border-radius:18px;padding:24px;text-align:center}
+.result .label{font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,0.65);margin-bottom:6px}
+.result .price{font-family:'Baloo 2';font-weight:800;font-size:40px;color:var(--terracotta);line-height:1.1}
+.result .sub{font-size:14px;color:rgba(255,255,255,0.8);margin-top:8px;line-height:1.5}
+.result .empty{font-size:15px;color:rgba(255,255,255,0.75);padding:10px 0}
+.wa-btn{display:inline-flex;align-items:center;gap:9px;background:var(--terracotta-strong);color:var(--white);font-weight:700;font-size:16px;padding:13px 24px;border-radius:999px;margin-top:16px;text-decoration:none}
+.footer-note{font-size:12.5px;color:var(--ink-soft);text-align:center;margin:20px 0 30px;line-height:1.6}
+.back-link{display:inline-block;margin-top:4px;font-size:13.5px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+
+var OFFICIAL = [
+  {name:'Centro (Centro Histórico)', fare:260},
+  {name:'García Ginerés', fare:280},
+  {name:'Pensiones', fare:280},
+  {name:'Alemán', fare:280},
+  {name:'Gonzalo Guerrero', fare:280},
+  {name:'Colonia México', fare:300},
+  {name:'Ciudad Caucel', fare:300},
+  {name:'Las Américas', fare:300},
+  {name:'Los Héroes', fare:300},
+  {name:'Montecristo', fare:410},
+  {name:'Dzityá', fare:410},
+  {name:'La Isla / Temozón', fare:410},
+  {name:'Club de Golf La Ceiba / Yucatán', fare:410}
+];
+var ESTIMATED = [
+  {name:'Santa Fe', fare:430},
+  {name:'Altosano', fare:470},
+  {name:'Provincia Golf Club', fare:505},
+  {name:'Privada Blue Cedar (Komchén)', fare:515},
+  {name:'Residencial Arbórea (Conkal)', fare:515},
+  {name:'ARBELIA Privada Residencial (Conkal)', fare:535},
+  {name:'Privada Nadira (Conkal)', fare:535},
+  {name:'Conkal (centro)', fare:535},
+  {name:'San Diego Cutz Dos', fare:545},
+  {name:'Praderas del Mayab', fare:565},
+  {name:'Yaxkukul', fare:640}
+];
+var ZONES = OFFICIAL.concat(ESTIMATED);
+
+var DEST_PRICES = [
+  {name:'Progreso', price:1200, label:'Medio día'},
+  {name:'Celestún', price:2500, label:'Día completo'},
+  {name:'Uxmal', price:1900, label:'Día completo'},
+  {name:'Chichén Itzá', price:2500, label:'Día completo'},
+  {name:'Chichén Itzá + Valladolid', price:3800, label:'Día completo extendido'},
+  {name:'Sisal', price:1800, label:'Medio día'},
+  {name:'Izamal', price:1400, label:'Medio día'},
+  {name:'Edzná (Campeche)', price:4200, label:'Día completo extendido'},
+  {name:'Valladolid', price:3100, label:'Día completo'},
+  {name:'Cancún', price:4800, label:'Día completo extendido'},
+  {name:'Ruta Puuc', price:2600, label:'Día completo'},
+  {name:'Ruta Cenotes', price:1700, label:'Día completo'}
+];
+
+var state = { modo: 'zona', zona: '', destino: '', destinoLibre: '', pasajeros: 1 };
+
+var WA_NUM = '+52 999 200 5550';
+function waLink(msg){
+  return 'https://wa.me/' + WA_NUM.replace(/[^0-9]/g,'') + '?text=' + encodeURIComponent(msg);
+}
+
+function money(n){ return '$' + Math.round(n).toLocaleString('es-MX') + ' MXN'; }
+
+function modeBtn(key, label){
+  var active = state.modo === key;
+  return '<button type="button" class="toggle-btn'+(active?' active':'')+'" data-action="setModo" data-modo="'+key+'">'+label+'</button>';
+}
+
+function render(){
+  var html =
+    '<header><div class="wrap"><div class="logo">M</div><div><h1>Cotiza tu viaje</h1><p>Mayab Private Drivers — chofer privado bilingüe en Mérida</p></div></div></header>'+
+    '<main class="wrap">'+
+      '<div class="card">'+
+        '<h2>¿Qué necesitas?</h2>'+
+        '<div class="toggle-group">'+
+          modeBtn('zona', 'Transfer en Mérida')+
+          modeBtn('destino', 'Tour a un destino')+
+          modeBtn('otro', 'Otro destino')+
+        '</div>'+
+
+        (state.modo==='zona'?(
+          '<label for="zonaSel">Tu zona o colonia</label>'+
+          '<select id="zonaSel" data-bind="zona">'+
+            '<option value="">Selecciona tu zona…</option>'+
+            '<optgroup label="Zonas con tarifa confirmada">'+ZONES.filter(function(z){return OFFICIAL.indexOf(z)!==-1;}).map(function(z){return '<option value="'+z.name+'"'+(state.zona===z.name?' selected':'')+'>'+z.name+'</option>';}).join('')+'</optgroup>'+
+            '<optgroup label="Zonas con tarifa estimada">'+ESTIMATED.map(function(z){return '<option value="'+z.name+'"'+(state.zona===z.name?' selected':'')+'>'+z.name+'</option>';}).join('')+'</optgroup>'+
+          '</select>'+
+          '<div class="hint">¿No ves tu colonia? Elige "Otro destino" y te cotizamos igual.</div>'
+        ):'')+
+
+        (state.modo==='destino'?(
+          '<label for="destSel">Destino</label>'+
+          '<select id="destSel" data-bind="destino">'+
+            '<option value="">Selecciona un destino…</option>'+
+            DEST_PRICES.map(function(d){return '<option value="'+d.name+'"'+(state.destino===d.name?' selected':'')+'>'+d.name+'</option>';}).join('')+
+          '</select>'+
+          (state.destino==='Chichén Itzá'?'<div class="hint">También disponible desde $1,200 MXN/persona (mínimo 2 personas), +$300 para alargar a Valladolid o cenotes. Pregúntanos por WhatsApp.</div>':'')
+        ):'')+
+
+        (state.modo==='otro'?(
+          '<label>¿A dónde quieres ir?</label>'+
+          '<input type="text" value="'+state.destinoLibre+'" data-bind="destinoLibre" placeholder="ej. Bacalar, Campeche, Mahahual…">'+
+          '<label>¿Cuántas personas?</label>'+
+          '<input type="number" inputmode="numeric" min="1" max="4" step="1" value="'+state.pasajeros+'" data-bind="pasajeros">'+
+          '<div class="hint">Este destino no está en nuestra lista fija, así que lo cotizamos a la medida — depende de la ruta, las casetas y el tiempo real. Escríbenos y te respondemos con el precio en minutos.</div>'
+        ):'')+
+      '</div>'+
+
+      renderResultado()+
+
+      (state.modo!=='otro'?'<p class="footer-note">Los precios son una estimación; pueden ajustarse por casetas de autopista, condiciones del camino o cambios de último momento. Confirmamos el precio final por WhatsApp antes de reservar.</p>':'')+
+    '</main>';
+
+  document.getElementById('app').innerHTML = html;
+  attachListeners();
+}
+
+function renderResultado(){
+  var precio = null, detalle = '', waMsg = '';
+
+  if (state.modo === 'zona' && state.zona){
+    var z = ZONES.filter(function(x){ return x.name === state.zona; })[0];
+    if (z){ precio = z.fare; detalle = state.zona + ' ↔ Aeropuerto de Mérida'; waMsg = 'Hola, quiero cotizar un transfer: ' + state.zona + ' ↔ Aeropuerto de Mérida.'; }
+  }
+  if (state.modo === 'destino' && state.destino){
+    var d = DEST_PRICES.filter(function(x){ return x.name === state.destino; })[0];
+    if (d){ precio = d.price; detalle = d.name + ' · ' + d.label; waMsg = 'Hola, quiero cotizar el tour a ' + d.name + '.'; }
+  }
+
+  if (state.modo === 'otro'){
+    if (!state.destinoLibre){
+      return '<div class="result"><div class="empty">Cuéntanos a dónde quieres ir para armar tu cotización.</div></div>';
+    }
+    waMsg = 'Hola, quiero cotizar un viaje a ' + state.destinoLibre + ' para ' + state.pasajeros + ' persona(s). No lo vi en la lista de destinos del sitio.';
+    return '<div class="result">'+
+      '<div class="label">Este destino se cotiza a la medida</div>'+
+      '<div class="sub" style="margin-top:4px;font-size:15px">'+state.destinoLibre+' · '+state.pasajeros+' pasajero(s)</div>'+
+      '<a class="wa-btn" href="'+waLink(waMsg)+'" target="_blank" rel="noopener">Pedir cotización por WhatsApp →</a>'+
+    '</div>';
+  }
+
+  if (precio === null){
+    return '<div class="result"><div class="empty">Completa los datos de arriba para ver tu precio estimado.</div></div>';
+  }
+  return '<div class="result">'+
+    '<div class="label">Precio estimado</div>'+
+    '<div class="price">'+money(precio)+'</div>'+
+    '<div class="sub">'+detalle+' · tarifa plana por vehículo (hasta 4 pasajeros)</div>'+
+    '<a class="wa-btn" href="'+waLink(waMsg)+'" target="_blank" rel="noopener">Confirmar por WhatsApp →</a>'+
+  '</div>';
+}
+
+function attachListeners(){
+  var root = document.getElementById('app');
+  root.querySelectorAll('[data-action="setModo"]').forEach(function(btn){
+    btn.addEventListener('click', function(){ state.modo = btn.getAttribute('data-modo'); render(); });
+  });
+  root.querySelectorAll('[data-action="setRedondo"]').forEach(function(btn){
+    btn.addEventListener('click', function(){ state.redondo = btn.getAttribute('data-val') === '1'; render(); });
+  });
+  root.querySelectorAll('[data-bind]').forEach(function(el){
+    var evt = el.tagName === 'SELECT' ? 'change' : 'input';
+    el.addEventListener(evt, function(){
+      var key = el.getAttribute('data-bind');
+      var caret = el.selectionStart;
+      state[key] = el.value;
+      render();
+      var again = root.querySelector('[data-bind="'+key+'"]');
+      if (again && evt === 'input'){
+        again.focus();
+        try{ again.setSelectionRange(caret, caret); }catch(e){}
+      }
+    });
+  });
+}
+
+render();
+</script>
+</body>
+</html>
