@@ -49,6 +49,10 @@ input[type=number]:focus,select:focus{outline:2px solid var(--petrol);outline-of
 .breakdown div{display:flex;justify-content:space-between;color:rgba(255,255,255,0.85)}
 .breakdown strong{color:var(--white)}
 .footer-note{font-size:12px;color:var(--ink-soft);text-align:center;margin:18px 0 6px;line-height:1.5}
+.action-row{display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.18);flex-wrap:wrap}
+.action-btn{flex:1 1 140px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 12px;border-radius:999px;font-size:13.5px;font-weight:700;text-decoration:none;text-align:center}
+.action-btn.cal{background:var(--white);color:var(--petrol-deep)}
+.action-btn.reg{background:var(--terracotta-strong);color:var(--white)}
 .install-banner{background:var(--cream-soft);border:1px dashed var(--petrol);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--ink-soft);margin-bottom:14px;line-height:1.5}
 .install-banner b{color:var(--petrol-deep)}
 </style>
@@ -59,6 +63,9 @@ input[type=number]:focus,select:focus{outline:2px solid var(--petrol);outline-of
 "use strict";
 
 var state = {
+  cliente: '',
+  destino: '',
+  fecha: '',
   km: '',
   minIda: '',
   tipoViaje: 'redondo_espera',
@@ -72,6 +79,25 @@ var state = {
   tarifaEspera: 150,
   margen: 30
 };
+
+function pad2(n){ return (n<10?'0':'')+n; }
+function gcalLink(r){
+  var title = encodeURIComponent('Mayab — ' + (state.destino || 'Viaje') + (state.cliente ? (' · ' + state.cliente) : ''));
+  var details = encodeURIComponent(
+    'Cliente: ' + (state.cliente || '—') + '\n' +
+    'Destino: ' + (state.destino || '—') + '\n' +
+    'Precio: ' + money(r.precioRedondeado) + (r.pasajeros>1?(' (' + money(r.precioPorPersona) + '/persona)'):'') + '\n' +
+    'Pasajeros: ' + r.pasajeros + '\n' +
+    'Distancia total: ' + r.distanciaTotal.toFixed(1) + ' km\n' +
+    'Generado con el cotizador privado Mayab'
+  );
+  var datesParam = '';
+  if (state.fecha){
+    var d = state.fecha.replace(/-/g,'');
+    datesParam = '&dates=' + d + '/' + d;
+  }
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + title + datesParam + '&details=' + details;
+}
 
 function loadDefaults(){
   try{
@@ -153,6 +179,16 @@ function render(){
       '<div class="install-banner">📲 <b>Agrégala a tu pantalla de inicio</b> para abrirla como app: en Safari/Chrome toca Compartir → "Agregar a pantalla de inicio".</div>'+
 
       '<div class="card">'+
+        '<h2>Viaje</h2>'+
+        '<div class="row">'+
+          '<div><label>Cliente</label><input type="text" value="'+state.cliente+'" data-bind="cliente" placeholder="Nombre"></div>'+
+          '<div><label>Destino / zona</label><input type="text" value="'+state.destino+'" data-bind="destino" placeholder="ej. Bacalar"></div>'+
+        '</div>'+
+        '<label>Fecha del viaje</label>'+
+        '<input type="date" value="'+state.fecha+'" data-bind="fecha">'+
+      '</div>'+
+
+      '<div class="card">'+
         '<h2>Distancia y tiempo (de Google Maps)</h2>'+
         '<div class="row">'+
           '<div><label>Km de ida</label><input type="number" inputmode="decimal" min="0" step="0.1" value="'+state.km+'" data-bind="km" placeholder="ej. 120"></div>'+
@@ -205,6 +241,10 @@ function render(){
           '<div><span>Manejo ('+r.tiempoManejoHoras.toFixed(1)+' h)</span><strong>'+money(r.costoManejo)+'</strong></div>'+
           '<div><span>Espera</span><strong>'+money(r.costoEspera)+'</strong></div>'+
           '<div><span>Costo total (piso)</span><strong>'+money(r.costoTotal)+'</strong></div>'+
+        '</div>'+
+        '<div class="action-row">'+
+          '<a class="action-btn cal" href="'+gcalLink(r)+'" target="_blank" rel="noopener">📅 Agregar a Calendar</a>'+
+          '<a class="action-btn reg" href="https://claude.ai/artifact/KMPSU6z8EPNwnQFyMDVayi" target="_blank" rel="noopener">📋 Abrir registro de viajes</a>'+
         '</div>'+
       '</div>'+
 
