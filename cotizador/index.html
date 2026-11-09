@@ -99,6 +99,40 @@ function gcalLink(r){
   return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + title + datesParam + '&details=' + details;
 }
 
+function slugify(s){
+  return String(s||'')
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'')
+    .slice(0,40);
+}
+
+// Id determinístico (mismo cliente+destino+fecha siempre produce el mismo id),
+// para que re-abrir el mismo link actualice el mismo viaje en vez de duplicarlo.
+function tripId(){
+  var base = slugify(state.cliente) + '_' + slugify(state.destino) + '_' + slugify(state.fecha);
+  return 't-' + (base || 'viaje') + '-' + Math.abs(hashStr(state.cliente+'|'+state.destino+'|'+state.fecha)).toString(36);
+}
+function hashStr(s){
+  var h = 0;
+  for (var i=0;i<s.length;i++){ h = ((h<<5)-h) + s.charCodeAt(i); h |= 0; }
+  return h;
+}
+
+function regLink(r){
+  var id = tripId();
+  var params = [
+    'id=' + encodeURIComponent(id),
+    'cliente=' + encodeURIComponent(state.cliente||''),
+    'destino=' + encodeURIComponent(state.destino||''),
+    'fecha=' + encodeURIComponent(state.fecha||''),
+    'precio=' + encodeURIComponent(r.precioRedondeado),
+    'estatus=reservado'
+  ].join('&');
+  return 'https://claude.ai/artifact/KMPSU6z8EPNwnQFyMDVayi?' + params;
+}
+
 function loadDefaults(){
   try{
     var saved = localStorage.getItem('cotizadorMayabDefaults');
@@ -244,8 +278,9 @@ function render(){
         '</div>'+
         '<div class="action-row">'+
           '<a class="action-btn cal" href="'+gcalLink(r)+'" target="_blank" rel="noopener">📅 Agregar a Calendar</a>'+
-          '<a class="action-btn reg" href="https://claude.ai/artifact/KMPSU6z8EPNwnQFyMDVayi" target="_blank" rel="noopener">📋 Abrir registro de viajes</a>'+
+          '<a class="action-btn reg" href="'+regLink(r)+'" target="_blank" rel="noopener">✅ Confirmar y registrar reserva</a>'+
         '</div>'+
+        '<div class="hint" style="margin-top:8px;color:rgba(255,255,255,0.75)">Al confirmar, el viaje se guarda solo como "reservado" en tu registro — ahí lo marcas completado cuando termine.</div>'+
       '</div>'+
 
       '<p class="footer-note">Mismo modelo que tarifario_destinos_mayab.xlsx: gasolina real + casetas + $/hora de manejo y espera + margen, redondeado a $50. Ajusta el precio final con tu criterio de mercado antes de cotizar.</p>'+
