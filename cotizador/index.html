@@ -77,7 +77,8 @@ var state = {
   precioGas: 1.40,
   tarifaManejo: 300,
   tarifaEspera: 150,
-  margen: 30
+  margen: 30,
+  ajustePercibido: 0
 };
 
 function pad2(n){ return (n<10?'0':'')+n; }
@@ -183,7 +184,9 @@ function calcular(){
   var costoTotal = costoDirecto + costoManoObra;
   var margen = num(state.margen, 0);
   var precioConMargen = costoTotal * (1 + margen / 100);
-  var precioRedondeado = Math.round(precioConMargen / 50) * 50;
+  var ajustePercibido = num(state.ajustePercibido, 0);
+  var precioAjustado = precioConMargen * (1 + ajustePercibido / 100);
+  var precioRedondeado = Math.round(precioAjustado / 50) * 50;
   var pasajeros = Math.max(1, Math.min(4, Math.round(num(state.pasajeros, 1))));
   var precioPorPersona = precioRedondeado / pasajeros;
 
@@ -192,6 +195,7 @@ function calcular(){
     costoGasolina: costoGasolina, costoCasetas: costoCasetas,
     costoManejo: costoManejo, costoEspera: costoEspera,
     costoTotal: costoTotal, precioConMargen: precioConMargen,
+    ajustePercibido: ajustePercibido, precioAjustado: precioAjustado,
     precioRedondeado: precioRedondeado, pasajeros: pasajeros,
     precioPorPersona: precioPorPersona, esRedondo: esRedondo
   };
@@ -200,6 +204,11 @@ function calcular(){
 function tipoBtn(key, label){
   var active = state.tipoViaje === key;
   return '<button type="button" class="toggle-btn'+(active?' active':'')+'" data-action="setTipo" data-tipo="'+key+'">'+label+'</button>';
+}
+
+function ajusteBtn(pct, label){
+  var active = num(state.ajustePercibido, 0) === pct;
+  return '<button type="button" class="toggle-btn'+(active?' active':'')+'" data-action="setAjuste" data-ajuste="'+pct+'">'+label+'</button>';
 }
 
 function render(){
@@ -251,6 +260,18 @@ function render(){
       '</div>'+
 
       '<div class="card">'+
+        '<h2>Ajuste por zona/cliente</h2>'+
+        '<div class="toggle-group" style="margin-bottom:10px">'+
+          ajusteBtn(0, 'Ninguno')+
+          ajusteBtn(45, 'Zona exclusiva (+45%)')+
+          ajusteBtn(20, 'Última hora / alta demanda (+20%)')+
+        '</div>'+
+        '<label>Ajuste manual (%)</label>'+
+        '<input type="number" inputmode="numeric" step="5" value="'+state.ajustePercibido+'" data-bind="ajustePercibido">'+
+        '<div class="hint">Caso real: transfer aeropuerto→Country Club cotizado en ~$410–450 con el modelo base; el cliente (Emilio) consideró que eso estaba muy bajo y pagó $600 (+~40%) por el mismo viaje. Usa este ajuste para zonas residenciales exclusivas (Country Club, Temozón, La Ceiba…), reservas de último minuto, alta demanda, o cuando el cliente ya demostró que valora el servicio por encima del costeo mecánico. El costeo (arriba) sigue siendo tu piso — este ajuste es el techo que puedes pedir.</div>'+
+      '</div>'+
+
+      '<div class="card">'+
         '<button type="button" class="adv-toggle" data-action="toggleAdv">'+(state.advOpen?'▾':'▸')+' Supuestos del modelo (editable)</button>'+
         '<div class="adv-body'+(state.advOpen?' open':'')+'">'+
           '<div class="row">'+
@@ -276,6 +297,8 @@ function render(){
           '<div><span>Manejo ('+r.tiempoManejoHoras.toFixed(1)+' h)</span><strong>'+money(r.costoManejo)+'</strong></div>'+
           '<div><span>Espera</span><strong>'+money(r.costoEspera)+'</strong></div>'+
           '<div><span>Costo total (piso)</span><strong>'+money(r.costoTotal)+'</strong></div>'+
+          '<div><span>Con margen ('+num(state.margen,0)+'%)</span><strong>'+money(r.precioConMargen)+'</strong></div>'+
+          (r.ajustePercibido?('<div><span>Ajuste zona/cliente ('+r.ajustePercibido+'%)</span><strong>'+money(r.precioAjustado-r.precioConMargen)+'</strong></div>'):'')+
         '</div>'+
         '<div class="action-row">'+
           '<button type="button" class="action-btn reg" data-action="confirmReserva" data-cal="'+encAttr(gcalLink(r))+'" data-reg="'+encAttr(regLink(r))+'" style="border:none;width:100%;cursor:pointer">✅ Confirmar reserva (agenda + registra)</button>'+
@@ -283,7 +306,7 @@ function render(){
         '<div class="hint" style="margin-top:8px;color:rgba(255,255,255,0.75)">Un clic hace las dos cosas: abre el evento en tu Google Calendar (para que te llegue el recordatorio) y guarda el viaje como "reservado" en tu registro.</div>'+
       '</div>'+
 
-      '<p class="footer-note">Mismo modelo que tarifario_destinos_mayab.xlsx: gasolina real + casetas + $/hora de manejo y espera + margen, redondeado a $50. Ajusta el precio final con tu criterio de mercado antes de cotizar.</p>'+
+      '<p class="footer-note">Mismo modelo que tarifario_destinos_mayab.xlsx: gasolina real + casetas + $/hora de manejo y espera + margen + ajuste por zona/cliente, redondeado a $50. El costeo es tu piso; el ajuste es cuánto más puedes pedir cuando el valor percibido lo justifica.</p>'+
     '</div>';
 
   document.getElementById('app').innerHTML = html;
@@ -311,6 +334,9 @@ function attachListeners(){
   });
   root.querySelectorAll('[data-action="setTipo"]').forEach(function(btn){
     btn.addEventListener('click', function(){ state.tipoViaje = btn.getAttribute('data-tipo'); render(); });
+  });
+  root.querySelectorAll('[data-action="setAjuste"]').forEach(function(btn){
+    btn.addEventListener('click', function(){ state.ajustePercibido = num(btn.getAttribute('data-ajuste'), 0); render(); });
   });
   var advBtn = root.querySelector('[data-action="toggleAdv"]');
   if (advBtn) advBtn.addEventListener('click', function(){ state.advOpen = !state.advOpen; render(); });

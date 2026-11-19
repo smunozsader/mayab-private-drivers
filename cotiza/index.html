@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Cotiza tu transfer o tour con Mayab Private Drivers, chofer privado bilingüe en Mérida. Precio al instante.">
+<meta name="description" content="Cotiza tu transfer o tour con Mayab Private Drivers, chofer privado bilingüe en Mérida. Respuesta rápida por WhatsApp.">
 <meta name="theme-color" content="#0B413B">
 <title>Cotiza tu viaje — Mayab Private Drivers</title>
 <link rel="icon" href="../cotizador/icon-192.png">
@@ -136,7 +136,7 @@ function render(){
             '<option value="">Selecciona un destino…</option>'+
             DEST_PRICES.map(function(d){return '<option value="'+d.name+'"'+(state.destino===d.name?' selected':'')+'>'+d.name+'</option>';}).join('')+
           '</select>'+
-          (state.destino==='Chichén Itzá'?'<div class="hint">También disponible desde $1,200 MXN/persona (mínimo 2 personas), +$300 para alargar a Valladolid o cenotes. Pregúntanos por WhatsApp.</div>':'')
+          (state.destino==='Chichén Itzá'?'<div class="hint">También hay una modalidad por persona para grupos de 1–2, y la opción de alargar a Valladolid o cenotes. Pregúntanos por WhatsApp.</div>':'')
         ):'')+
 
         (state.modo==='otro'?(
@@ -150,7 +150,7 @@ function render(){
 
       renderResultado()+
 
-      (state.modo!=='otro'?'<p class="footer-note">Los precios son una estimación; pueden ajustarse por casetas de autopista, condiciones del camino o cambios de último momento. Confirmamos el precio final por WhatsApp antes de reservar.</p>':'')+
+      (state.modo==='zona'?'<p class="footer-note">Los precios son una estimación; pueden ajustarse por casetas de autopista, condiciones del camino o cambios de último momento. Confirmamos el precio final por WhatsApp antes de reservar.</p>':'')+
     '</main>';
 
   document.getElementById('app').innerHTML = html;
@@ -164,9 +164,17 @@ function renderResultado(){
     var z = ZONES.filter(function(x){ return x.name === state.zona; })[0];
     if (z){ precio = z.fare; detalle = state.zona + ' ↔ Aeropuerto de Mérida'; waMsg = 'Hola, quiero cotizar un transfer: ' + state.zona + ' ↔ Aeropuerto de Mérida.'; }
   }
-  if (state.modo === 'destino' && state.destino){
+  if (state.modo === 'destino'){
+    if (!state.destino){
+      return '<div class="result"><div class="empty">Elige un destino para armar tu cotización.</div></div>';
+    }
     var d = DEST_PRICES.filter(function(x){ return x.name === state.destino; })[0];
-    if (d){ precio = d.price; detalle = d.name + ' · ' + d.label; waMsg = 'Hola, quiero cotizar el tour a ' + d.name + '.'; }
+    waMsg = 'Hola, quiero cotizar el tour a ' + state.destino + (d ? (' (' + d.label + ')') : '') + '.';
+    return '<div class="result">'+
+      '<div class="label">Te cotizamos este tour por WhatsApp</div>'+
+      '<div class="sub" style="margin-top:4px;font-size:15px">'+state.destino+(d?(' · '+d.label):'')+'</div>'+
+      '<a class="wa-btn" href="'+waLink(waMsg)+'" target="_blank" rel="noopener">Pedir cotización por WhatsApp →</a>'+
+    '</div>';
   }
 
   if (state.modo === 'otro'){
