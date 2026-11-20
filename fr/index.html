@@ -83,6 +83,7 @@ select,input{font-family:inherit}
 .navlabel{display:inline}
 .desktop-nav-group{display:flex;align-items:center}
 .mobile-menu-btn{display:none;align-items:center;justify-content:center}
+.mobile-lang-group{display:none}
 .mobile-bottom-bar{display:none}
 .back-to-top{position:fixed;right:16px;bottom:24px;z-index:45;width:46px;height:46px;border-radius:50%;background:var(--petrol-deep);color:var(--white);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(11,65,59,0.35);border:none;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s}
 .back-to-top.visible{opacity:1;pointer-events:auto}
@@ -90,6 +91,7 @@ select,input{font-family:inherit}
   .navlabel{display:none}
   .desktop-nav-group{display:none}
   .mobile-menu-btn{display:inline-flex}
+  .mobile-lang-group{display:flex}
   .mobile-bottom-bar{display:flex}
   body{padding-bottom:78px}
   .back-to-top{bottom:94px}
@@ -477,9 +479,11 @@ select,input{font-family:inherit}
       var active = state.service === key;
       return '<button type="button" data-action="setService" data-service="'+key+'" aria-pressed="'+active+'" style="padding:10px 16px;border-radius:999px;font-size:16.5px;font-weight:700;border:1.5px solid var(--petrol);background:'+(active?activeBg:idleBg)+';color:'+(active?activeFg:idleFg)+';cursor:pointer">'+esc(label)+'</button>';
     }
-    function langBtn(code, label){
+    function langBtn(code, compact){
       var active = state.lang === code;
-      return '<button type="button" data-action="setLang" data-lang="'+code+'" aria-pressed="'+active+'" style="padding:6px 10px;border-radius:999px;border:none;font-size:21px;font-weight:800;background:'+(active?langActiveBg:langIdleBg)+';color:'+(active?langActiveFg:langIdleFg)+'">'+code.toUpperCase()+'</button>';
+      var pad = compact ? '4px 7px' : '6px 10px';
+      var fs = compact ? '13px' : '21px';
+      return '<button type="button" data-action="setLang" data-lang="'+code+'" aria-pressed="'+active+'" style="padding:'+pad+';border-radius:999px;border:none;font-size:'+fs+';font-weight:800;background:'+(active?langActiveBg:langIdleBg)+';color:'+(active?langActiveFg:langIdleFg)+'">'+code.toUpperCase()+'</button>';
     }
 
     var destinoOptionsFixed = ['Progreso','Celestún','Sisal','Uxmal','Chichén Itzá','Izamal','Edzná (Campeche)','Chichén Itzá + Valladolid','Valladolid','Cancún','Ruta Puuc','Ruta Cenotes'].map(function(d){
@@ -509,7 +513,10 @@ select,input{font-family:inherit}
           '</div>'+
           '<a href="'+waLinkGeneral+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:var(--terracotta-strong);color:var(--white);font-weight:700;font-size:16.5px;padding:10px 18px;border-radius:999px;white-space:nowrap">'+ICONS.whatsapp+'WhatsApp</a>'+
         '</div>'+
-        '<button type="button" class="mobile-menu-btn" data-action="toggleMobileMenu" aria-label="Menú" aria-expanded="'+(state.mobileMenuOpen?'true':'false')+'" style="width:42px;height:42px;border-radius:11px;border:1.5px solid var(--line);background:var(--white);color:var(--petrol-deep)">'+
+        '<div class="mobile-lang-group" role="group" aria-label="Idioma / Language" style="gap:3px;background:var(--cream-soft);padding:3px;border-radius:999px;flex:none">'+
+          langBtn('es',true)+langBtn('en',true)+langBtn('fr',true)+langBtn('it',true)+
+        '</div>'+
+        '<button type="button" class="mobile-menu-btn" data-action="toggleMobileMenu" aria-label="Menú" aria-expanded="'+(state.mobileMenuOpen?'true':'false')+'" style="width:42px;height:42px;border-radius:11px;border:1.5px solid var(--line);background:var(--white);color:var(--petrol-deep);flex:none">'+
           (state.mobileMenuOpen?ICONS.close:ICONS.menu)+
         '</button>'+
       '</div>'+
@@ -518,9 +525,6 @@ select,input{font-family:inherit}
           '<a href="#servicios" data-action="closeMobileMenu" style="font-weight:700;font-size:19px;color:var(--ink)">'+esc(t.navServices)+'</a>'+
           '<a href="#tarifas" data-action="closeMobileMenu" style="font-weight:700;font-size:19px;color:var(--ink)">'+esc(t.navTarifas)+'</a>'+
           '<a href="#sobre-mi" data-action="closeMobileMenu" style="font-weight:700;font-size:19px;color:var(--ink)">'+esc(t.navSobreMi)+'</a>'+
-          '<div role="group" aria-label="Idioma / Language" style="display:flex;gap:4px;background:var(--cream-soft);padding:4px;border-radius:999px;align-self:flex-start;margin-top:4px">'+
-            langBtn('es')+langBtn('en')+langBtn('fr')+langBtn('it')+
-          '</div>'+
         '</div>'
       ):'')+
     '</header>'+
