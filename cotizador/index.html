@@ -241,11 +241,11 @@ function render(){
         '</div>'+
         '<label>Tipo de viaje</label>'+
         '<div class="toggle-group">'+
-          tipoBtn('redondo_espera', 'Redondo, con espera')+
-          tipoBtn('redondo_sin_espera', 'Redondo, sin espera')+
-          tipoBtn('ida_sin_regreso', 'Solo ida (te recogen otro día)')+
+          tipoBtn('redondo_espera', 'Voy y vengo, con espera')+
+          tipoBtn('redondo_sin_espera', 'Regreso vacío el mismo día')+
+          tipoBtn('ida_sin_regreso', 'No regreso ese día')+
         '</div>'+
-        '<div class="hint">'+(r.esRedondo?'Regresas manejando el mismo día — se cobra gasolina y caseta de ida y vuelta, aunque el cliente solo pague "el viaje".':'El cliente paga solo el tramo de ida y tú no regresas manejando ese mismo tramo (p. ej. te recogen después) — no se duplica gasolina ni caseta.')+'</div>'+
+        '<div class="hint">'+(r.esRedondo?'Manejas los dos tramos (ida y vuelta) el mismo día — se cobra gasolina, caseta Y horas de manejo de ida y vuelta, aunque al cliente le cobres solo "el viaje" de ida (ej. Cancún). Usa este modo aunque sea "solo ida" para el cliente, siempre que tú sí manejes de regreso.':'No manejas de vuelta ese día (ej. te recogen en otro viaje, días después) — no se cobra nada del regreso porque no hay regreso que cubrir todavía.')+'</div>'+
         (state.tipoViaje === 'redondo_espera' ?
           ('<div style="margin-top:12px">'+
             '<label>Horas de espera en destino'+(horasEspera<=0?' — <span style="color:var(--terracotta-strong)">¡ponle un valor o no se cobra espera!</span>':'')+'</label>'+
