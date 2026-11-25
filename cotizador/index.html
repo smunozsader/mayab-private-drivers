@@ -171,7 +171,7 @@ function calcular(){
   var factor = esRedondo ? 2 : 1;
   var distanciaTotal = km * factor;
   var tiempoManejoHoras = (minIda * factor) / 60;
-  var horasEspera = num(state.horasEspera, 0);
+  var horasEspera = state.tipoViaje === 'redondo_espera' ? num(state.horasEspera, 0) : 0;
   var casetaIda = num(state.casetaIda, 0);
   var casetaVuelta = esRedondo ? num(state.casetaVuelta || state.casetaIda, 0) : 0;
 
@@ -213,6 +213,7 @@ function ajusteBtn(pct, label){
 
 function render(){
   var r = calcular();
+  var horasEspera = num(state.horasEspera, 0);
   var html =
     '<div class="wrap">'+
       '<header>'+
@@ -245,12 +246,18 @@ function render(){
           tipoBtn('ida_sin_regreso', 'Solo ida (te recogen otro día)')+
         '</div>'+
         '<div class="hint">'+(r.esRedondo?'Regresas manejando el mismo día — se cobra gasolina y caseta de ida y vuelta, aunque el cliente solo pague "el viaje".':'El cliente paga solo el tramo de ida y tú no regresas manejando ese mismo tramo (p. ej. te recogen después) — no se duplica gasolina ni caseta.')+'</div>'+
+        (state.tipoViaje === 'redondo_espera' ?
+          ('<div style="margin-top:12px">'+
+            '<label>Horas de espera en destino'+(horasEspera<=0?' — <span style="color:var(--terracotta-strong)">¡ponle un valor o no se cobra espera!</span>':'')+'</label>'+
+            '<input type="number" inputmode="decimal" min="0" step="0.5" value="'+state.horasEspera+'" data-bind="horasEspera" style="'+(horasEspera<=0?'border-color:var(--terracotta-strong)':'')+'">'+
+          '</div>') :
+          '<div class="hint" style="margin-top:8px">Este tipo de viaje no cobra horas de espera — si en realidad sí esperas en el destino, cambia a "Redondo, con espera".</div>'
+        )+
       '</div>'+
 
       '<div class="card">'+
-        '<h2>Espera y casetas</h2>'+
+        '<h2>Casetas y pasajeros</h2>'+
         '<div class="row">'+
-          '<div><label>Horas de espera en destino</label><input type="number" inputmode="decimal" min="0" step="0.5" value="'+state.horasEspera+'" data-bind="horasEspera"></div>'+
           '<div><label>Pasajeros (1–4)</label><input type="number" inputmode="numeric" min="1" max="4" step="1" value="'+state.pasajeros+'" data-bind="pasajeros"></div>'+
         '</div>'+
         '<div class="row">'+
@@ -333,7 +340,11 @@ function attachListeners(){
     });
   });
   root.querySelectorAll('[data-action="setTipo"]').forEach(function(btn){
-    btn.addEventListener('click', function(){ state.tipoViaje = btn.getAttribute('data-tipo'); render(); });
+    btn.addEventListener('click', function(){
+      state.tipoViaje = btn.getAttribute('data-tipo');
+      if (state.tipoViaje !== 'redondo_espera'){ state.horasEspera = 0; }
+      render();
+    });
   });
   root.querySelectorAll('[data-action="setAjuste"]').forEach(function(btn){
     btn.addEventListener('click', function(){ state.ajustePercibido = num(btn.getAttribute('data-ajuste'), 0); render(); });
