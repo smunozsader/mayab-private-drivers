@@ -236,9 +236,7 @@ select,input{font-family:inherit}
       tarifasTitle:'Tarifas de transfer aeropuerto', tarifasIntro:'Tarifa plana por vehículo completo (hasta 4 pasajeros), no por persona. Solo se cobra el tramo con pasajero a bordo, entre tu zona y el aeropuerto. Es una tarifa de referencia; en fechas de alta demanda, zonas exclusivas o reservas de último momento el precio final puede ajustarse — lo confirmamos contigo por WhatsApp.',
       zoneSelectLabel:'¿Dónde vives o te hospedas?', zonePlaceholder:'Selecciona tu colonia o fraccionamiento…',
       officialGroupLabel:'Tarifario de referencia oficial', estimatedGroupLabel:'Zonas estimadas (sin tarifario oficial)',
-      fareLabel:'Tarifa flat estimada', fareBadgeOfficial:'Tarifario de referencia oficial', fareBadgeEstimated:'Estimación propia — no oficial',
-      viewFullBtn:'Ver tabla completa de zonas', tblZoneHeader:'Zona', tblFareHeader:'Tarifa',
-      officialTableHeading:'Tarifario de referencia oficial', estimatedTableHeading:'Zonas estimadas (sin tarifario oficial)',
+      fareLabel:'Selecciona tu zona para cotizar por WhatsApp',
       sobreMiRole:'Chofer privado bilingüe · Mérida, Yucatán',
       reservarTitle:'Arma tu solicitud', reservarSub:'Elige el servicio, completa los datos y envíalo por WhatsApp. Confirmamos disponibilidad y tarifa directamente contigo.',
       serviceToggleLabel:'Servicio',
@@ -303,9 +301,7 @@ select,input{font-family:inherit}
       tarifasTitle:'Airport transfer rates', tarifasIntro:"A flat rate for the whole vehicle (up to 4 passengers), not per person. You're only charged for the leg with a passenger on board, between your zone and the airport. This is a reference rate; on high-demand dates, exclusive zones, or last-minute bookings the final price may be adjusted — we'll confirm it with you over WhatsApp.",
       zoneSelectLabel:'Where are you staying?', zonePlaceholder:'Pick your neighborhood…',
       officialGroupLabel:'Official reference rates', estimatedGroupLabel:'Estimated zones (not officially listed)',
-      fareLabel:'Estimated flat rate', fareBadgeOfficial:'Official reference rate', fareBadgeEstimated:'Our own estimate — not official',
-      viewFullBtn:'See the full rate list', tblZoneHeader:'Zone', tblFareHeader:'Rate',
-      officialTableHeading:'Official reference rates', estimatedTableHeading:'Estimated zones (not officially listed)',
+      fareLabel:'Pick your zone to get a quote on WhatsApp',
       sobreMiRole:'Bilingual private driver · Mérida, Yucatán',
       reservarTitle:'Build your request', reservarSub:"Pick a service, fill in the details, and send it over WhatsApp. We'll confirm availability and rate with you directly.",
       serviceToggleLabel:'Service',
@@ -370,9 +366,7 @@ select,input{font-family:inherit}
       tarifasTitle:'Tarifs des transferts aéroport', tarifasIntro:"Tarif fixe pour tout le véhicule (jusqu'à 4 passagers), pas par personne. Seul le trajet avec passager à bord, entre votre zone et l'aéroport, est facturé. Il s'agit d'un tarif de référence ; en période de forte demande, dans des zones exclusives ou pour une réservation de dernière minute, le prix final peut être ajusté — nous le confirmons avec vous par WhatsApp.",
       zoneSelectLabel:'Où logez-vous ?', zonePlaceholder:'Choisissez votre quartier…',
       officialGroupLabel:'Tarifs de référence officiels', estimatedGroupLabel:'Zones estimées (hors tarif officiel)',
-      fareLabel:'Tarif fixe estimé', fareBadgeOfficial:'Tarif de référence officiel', fareBadgeEstimated:'Notre propre estimation — non officielle',
-      viewFullBtn:'Voir le tarif complet', tblZoneHeader:'Zone', tblFareHeader:'Tarif',
-      officialTableHeading:'Tarifs de référence officiels', estimatedTableHeading:'Zones estimées (hors tarif officiel)',
+      fareLabel:'Choisissez votre zone pour obtenir un devis par WhatsApp',
       sobreMiRole:'Chauffeur privé bilingue · Mérida, Yucatán',
       reservarTitle:'Composez votre demande', reservarSub:'Choisissez un service, remplissez les détails et envoyez tout par WhatsApp. Nous confirmons la disponibilité et le tarif directement avec vous.',
       serviceToggleLabel:'Service',
@@ -437,9 +431,7 @@ select,input{font-family:inherit}
       tarifasTitle:'Tariffe transfer aeroportuale', tarifasIntro:"Tariffa fissa per l'intero veicolo (fino a 4 passeggeri), non a persona. Si paga solo la tratta con passeggero a bordo, tra la tua zona e l'aeroporto. È una tariffa di riferimento; in date di alta richiesta, zone esclusive o prenotazioni dell'ultimo minuto il prezzo finale può essere adeguato — lo confermiamo con te su WhatsApp.",
       zoneSelectLabel:'Dove alloggi?', zonePlaceholder:'Scegli il tuo quartiere…',
       officialGroupLabel:'Tariffe di riferimento ufficiali', estimatedGroupLabel:'Zone stimate (senza tariffa ufficiale)',
-      fareLabel:'Tariffa fissa stimata', fareBadgeOfficial:'Tariffa di riferimento ufficiale', fareBadgeEstimated:'Stima nostra — non ufficiale',
-      viewFullBtn:'Guarda la tariffa completa', tblZoneHeader:'Zona', tblFareHeader:'Tariffa',
-      officialTableHeading:'Tariffe di riferimento ufficiali', estimatedTableHeading:'Zone stimate (senza tariffa ufficiale)',
+      fareLabel:'Scegli la tua zona per un preventivo su WhatsApp',
       sobreMiRole:'Autista privato bilingue · Mérida, Yucatán',
       reservarTitle:'Crea la tua richiesta', reservarSub:'Scegli il servizio, compila i dettagli e invialo su WhatsApp. Confermiamo disponibilità e tariffa direttamente con te.',
       serviceToggleLabel:'Servizio',
@@ -474,7 +466,6 @@ select,input{font-family:inherit}
   var state = {
     lang: 'it',
     zone: '',
-    showFullTable: false,
     service: 'transfer',
     destino: 'Progreso',
     zoneBooking: '',
@@ -560,15 +551,12 @@ select,input{font-family:inherit}
 
     var sel = null;
     for (var i = 0; i < ALL.length; i++) { if (ALL[i].name === state.zone) { sel = ALL[i]; break; } }
-    var isOfficial = sel ? (OFFICIAL.indexOf(sel) > -1) : false;
-    var fareText = sel ? ('$' + sel.fare + ' MXN') : '—';
-    var fareBadge = sel ? (isOfficial ? t.fareBadgeOfficial : t.fareBadgeEstimated) : '';
-    var fareBadgeColor = sel ? (isOfficial ? 'var(--petrol)' : 'var(--terracotta-strong)') : 'var(--ink-soft)';
 
     var waBase = 'https://wa.me/529992005550?text=';
     var waLink = waBase + encodeURIComponent(buildBookingMessage(t));
     var waLinkGeneral = waBase + encodeURIComponent(t.waGeneralMsg);
     var waLinkPet = waBase + encodeURIComponent(t.waPetMsg);
+    var waLinkZone = sel ? (waBase + encodeURIComponent(t.waGreeting + ' ' + t.waZoneLabel + sel.name)) : '';
 
     var activeBg = 'var(--petrol)', activeFg = 'var(--white)', idleBg = 'var(--white)', idleFg = 'var(--ink)';
     var langActiveBg = 'var(--terracotta-strong)', langActiveFg = 'var(--white)', langIdleBg = 'transparent', langIdleFg = 'var(--ink)';
@@ -726,29 +714,20 @@ select,input{font-family:inherit}
         '<h2 style="margin:0 0 10px;font-size:clamp(24px,3.4vw,34px);font-weight:700;color:var(--ink)">'+esc(t.tarifasTitle)+'</h2>'+
         '<p style="margin:0 0 30px;font-size:17.5px;color:var(--ink-soft);max-width:680px;line-height:1.6">'+esc(t.tarifasIntro)+'</p>'+
         '<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">'+
-          '<div style="flex:1 1 320px;min-width:280px;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:26px">'+
+          '<div style="flex:1 1 420px;min-width:280px;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:26px">'+
             '<label for="zoneSelectCalc" style="display:block;font-weight:700;font-size:16.5px;color:var(--ink);margin-bottom:10px">'+esc(t.zoneSelectLabel)+'</label>'+
             '<select id="zoneSelectCalc" data-bind="zone" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);font-size:21px;color:var(--ink);background:var(--cream)">'+
               '<option value="">'+esc(t.zonePlaceholder)+'</option>'+
-              '<optgroup label="'+esc(t.officialGroupLabel)+'">'+optionsFor(OFFICIAL,true)+'</optgroup>'+
-              '<optgroup label="'+esc(t.estimatedGroupLabel)+'">'+optionsFor(ESTIMATED,true)+'</optgroup>'+
+              '<optgroup label="'+esc(t.officialGroupLabel)+'">'+optionsFor(OFFICIAL,false)+'</optgroup>'+
+              '<optgroup label="'+esc(t.estimatedGroupLabel)+'">'+optionsFor(ESTIMATED,false)+'</optgroup>'+
             '</select>'+
             '<div style="margin-top:22px;padding-top:22px;border-top:1px solid var(--line)">'+
-              '<div style="font-size:21px;color:var(--ink-soft);margin-bottom:4px">'+esc(t.fareLabel)+'</div>'+
-              '<div style="font-family:\'Baloo 2\';font-weight:800;font-size:40px;color:var(--terracotta)">'+fareText+'</div>'+
-              (sel?('<div style="display:inline-block;margin-top:8px;font-size:21px;font-weight:700;color:'+fareBadgeColor+';background:var(--cream-soft);padding:5px 12px;border-radius:999px">'+esc(fareBadge)+'</div>'):'')+
+              (sel?(
+                '<a href="'+waLinkZone+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:var(--terracotta-strong);color:var(--white);font-weight:700;font-size:16.5px;padding:12px 20px;border-radius:999px">'+ICONS.whatsapp+esc(t.destCtaWa)+'</a>'
+              ):(
+                '<div style="font-size:17.5px;color:var(--ink-soft)">'+esc(t.fareLabel)+'</div>'
+              ))+
             '</div>'+
-          '</div>'+
-          '<div style="flex:1 1 380px;min-width:280px">'+
-            '<button type="button" data-action="toggleFullTable" aria-expanded="'+state.showFullTable+'" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:21px;color:var(--ink);background:var(--cream-soft);padding:12px 18px;border-radius:999px;margin-bottom:18px">'+esc(t.viewFullBtn)+ICONS.chevron+'</button>'+
-            (state.showFullTable?(
-              '<div id="full-table" style="background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px;overflow-x:auto">'+
-                '<div style="font-family:\'Baloo 2\';font-weight:700;font-size:16.5px;color:var(--petrol);margin-bottom:8px">'+esc(t.officialTableHeading)+'</div>'+
-                '<table class="tbl"><thead><tr><th>'+esc(t.tblZoneHeader)+'</th><th>'+esc(t.tblFareHeader)+'</th></tr></thead><tbody>'+rowsFor(OFFICIAL)+'</tbody></table>'+
-                '<div style="font-family:\'Baloo 2\';font-weight:700;font-size:16.5px;color:var(--terracotta-strong);margin:20px 0 8px">'+esc(t.estimatedTableHeading)+'</div>'+
-                '<table class="tbl"><thead><tr><th>'+esc(t.tblZoneHeader)+'</th><th>'+esc(t.tblFareHeader)+'</th></tr></thead><tbody>'+rowsFor(ESTIMATED)+'</tbody></table>'+
-              '</div>'
-            ):'')+
           '</div>'+
         '</div>'+
       '</div>'+
@@ -952,8 +931,6 @@ select,input{font-family:inherit}
     root.querySelectorAll('[data-action="setRental"]').forEach(function(btn){
       btn.addEventListener('click', function(){ state.rentalType = btn.getAttribute('data-rental'); render(); });
     });
-    var toggleBtn = root.querySelector('[data-action="toggleFullTable"]');
-    if (toggleBtn) toggleBtn.addEventListener('click', function(){ state.showFullTable = !state.showFullTable; render(); });
     var incBtn = root.querySelector('[data-action="incPassengers"]');
     if (incBtn) incBtn.addEventListener('click', function(){ state.passengers = Math.min(4, state.passengers+1); render(); });
     var decBtn = root.querySelector('[data-action="decPassengers"]');
